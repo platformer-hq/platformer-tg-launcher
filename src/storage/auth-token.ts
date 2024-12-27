@@ -1,8 +1,8 @@
 import { type AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
-import { object, string } from 'zod';
+import { create } from 'superstruct';
 
 import { getStorageItem, setStorageItem } from '@/storage/storage.js';
-import { dateISO } from '@/parsers/dateISO.js';
+import { AuthToken } from '@/validation/AuthToken.js';
 
 const STORAGE_KEY = 'platformer-auth-token';
 
@@ -14,15 +14,11 @@ export function getAuthToken(options?: AsyncOptions): CancelablePromise<{
   token: string,
   expiresAt: Date
 } | undefined> {
-  const authTokenParser = object({
-    token: string(),
-    expiresAt: dateISO(),
-  });
-
   return CancelablePromise.withFn(async (abortSignal) => {
     try {
-      const json = authTokenParser.parse(
+      const json = create(
         JSON.parse(await getStorageItem(STORAGE_KEY, { abortSignal })),
+        AuthToken,
       );
 
       // Check if the token hasn't expired. We consider it expired if less than 30 seconds left
