@@ -19,7 +19,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@telegram-apps/sdk-solid": "^2.0.20",
+    "@telegram-apps/sdk-solid": "^2.0.21",
     "eruda": "^3.0.1",
     "solid-js": "^1.9.3",
     "superstruct": "^2.0.2"
