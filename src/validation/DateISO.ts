@@ -1,5 +1,3 @@
 import { coerce, date, unknown } from 'superstruct';
 
-export const DateISO = coerce(date(), unknown(), (v) => {
-  return Date.parse(String(v));
-});
+export const DateISO = coerce(date(), unknown(), (v) => new Date(String(v)));
