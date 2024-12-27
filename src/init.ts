@@ -30,5 +30,13 @@ export function init(debug: boolean) {
   });
 
   // Add Eruda if needed.
-  debug && import('eruda').then((lib) => lib.default.init()).catch(console.error);
+  debug && import('eruda')
+    .then(({ default: eruda }) => {
+      eruda.init();
+      eruda.position({
+        x: window.innerWidth - 50,
+        y: 0,
+      });
+    })
+    .catch(console.error);
 }
