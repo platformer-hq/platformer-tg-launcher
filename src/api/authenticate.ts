@@ -1,31 +1,32 @@
 import type { AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
-import { object, string } from 'zod';
+import { object } from 'superstruct';
 
-import { gqlRequest, type GqlRequestResponse } from '@/api/gqlRequest.js';
-import { dateISO } from '@/parsers/dateISO.js';
+import { gqlRequest, type GqlRequestResult } from '@/api/gqlRequest.js';
+import { AuthToken } from '@/validation/AuthToken.js';
 
+/**
+ * Authenticates the current user.
+ * @param baseUrl - API base URL.
+ * @param appId - application identifier to validate the init data.
+ * @param initData - init data.
+ * @param options - additional options.
+ */
 export function authenticate(
   baseUrl: string,
   appId: number,
   initData: string,
   options?: AsyncOptions,
-): CancelablePromise<GqlRequestResponse<{ token: string; expiresAt: Date }>> {
+): CancelablePromise<GqlRequestResult<{ token: string; expiresAt: Date }>> {
   return gqlRequest(
     baseUrl,
-    `
-mutation ($appId: Int, $initData: String!) {
-    authenticateTelegram(appID: $appId, initData: $initData) {
-        token
-        expiresAt
-    }
-}`,
+    'mutation ($appId: Int, $initData: String!) {'
+    + ' authenticateTelegram(appID: $appId, initData: $initData) {'
+    + '  token'
+    + '  expiresAt'
+    + ' }'
+    + '}',
     { appId, initData },
-    object({
-      authenticateTelegram: object({
-        token: string(),
-        expiresAt: dateISO(),
-      }),
-    }),
+    object({ authenticateTelegram: AuthToken }),
     options,
   ).then(v => v[0] === 'ok'
     ? ['ok', v[1].authenticateTelegram]

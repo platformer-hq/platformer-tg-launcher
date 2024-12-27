@@ -1,32 +1,36 @@
 import type { AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
-import { object, string } from 'zod';
+import { object, string } from 'superstruct';
 
-import { gqlRequest, type GqlRequestResponse } from '@/api/gqlRequest.js';
+import { gqlRequest, type GqlRequestResult } from '@/api/gqlRequest.js';
+import { maybe } from '@/validation/maybe.js';
 
+/**
+ * Retrieves the application URL.
+ * @param baseUrl - API base URL.
+ * @param authToken - authorization token.
+ * @param appId - application identifier to validate the init data.
+ * @param launchParams - launch parameters.
+ * @param options - additional options.
+ */
 export function getAppUrl(
   baseUrl: string,
   authToken: string,
   appId: number,
   launchParams: string,
   options?: AsyncOptions,
-): CancelablePromise<GqlRequestResponse<[appFound: boolean, url?: Maybe<string>]>> {
+): CancelablePromise<GqlRequestResult<[appFound: boolean, url?: Maybe<string>]>> {
   return gqlRequest(
     baseUrl,
-    `
-query ($appId: Int!, $launchParams: String!) {
-  app(appID: $appId) {
-    telegramURL(launchParams: $launchParams)
-  }
-}`,
+    'query ($appId: Int!, $launchParams: String!) {'
+    + ' app(appID: $appId) {'
+    + '  telegramURL(launchParams: $launchParams)'
+    + ' }'
+    + '}',
     { appId, launchParams },
     object({
-      app: object({
-        telegramURL: string()
-          .optional()
-          .nullable(),
-      })
-        .optional()
-        .nullable(),
+      app: maybe(object({
+        telegramURL: maybe(string()),
+      })),
     }),
     { ...options, authToken },
   ).then(v => v[0] === 'ok'

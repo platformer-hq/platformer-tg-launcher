@@ -1,10 +1,11 @@
-import { any, array, object, string } from 'zod';
+import { any, array, create, object, string, Struct } from 'superstruct';
 import { type AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
 
 import { GqlError } from '@/api/GqlError.js';
+import { maybe } from '@/validation/maybe.js';
 
 interface GqlErrorShape {
-  message?: string;
+  message?: Maybe<string>;
   extensions: {
     errorData: {
       code: string;
@@ -12,32 +13,31 @@ interface GqlErrorShape {
   };
 }
 
-const responseParser = object({
+const GqlResponse = object({
   data: any(),
-  errors: array(
-    object({
-      message: string().optional(),
-      extensions: object({
-        errorData: object({
-          code: string(),
-        }),
+  errors: maybe(array(object({
+    message: maybe(string()),
+    extensions: object({
+      errorData: object({
+        code: string(),
       }),
     }),
-  )
-    .optional()
-    .nullable(),
+  }))),
 });
 
 export interface GqlRequestOptions extends AsyncOptions {
   authToken?: string;
 }
 
-export type GqlRequestResponse<T> =
-  | [type: 'ok', data: T]
+export type GqlRequestError =
   | [type: 'gql', errors: GqlError[]]
   | [type: 'http', status: number, statusText: string]
   | [type: 'fetch', error: unknown]
   | [type: 'invalid-data', error: unknown];
+
+export type GqlRequestSuccess<T> = [type: 'ok', data: T];
+
+export type GqlRequestResult<T> = GqlRequestSuccess<T> | GqlRequestError
 
 /**
  * Performs a GraphQL request.
@@ -46,16 +46,16 @@ export type GqlRequestResponse<T> =
  * @param baseUrl - URL to send request to.
  * @param query - GraphQL query.
  * @param variables - query variables.
- * @param parser - parser used to validate the response.
+ * @param struct - structure used to validate the response.
  * @param options - additional options.
  */
-export function gqlRequest<T>(
+export function gqlRequest<T, S>(
   baseUrl: string,
   query: string,
   variables: Record<string, unknown>,
-  parser: { parse(value: unknown): T },
+  struct: Struct<T, S>,
   options?: GqlRequestOptions,
-): CancelablePromise<GqlRequestResponse<T>> {
+): CancelablePromise<GqlRequestResult<T>> {
   return CancelablePromise.withFn(async signal => {
     let response: Response;
     try {
@@ -74,11 +74,12 @@ export function gqlRequest<T>(
 
     let data: {
       data?: unknown;
-      errors?: GqlErrorShape[] | null;
+      errors?: Maybe<GqlErrorShape[]>;
     } | undefined;
     if ((response.headers.get('content-type') || '').includes('application/json')) {
-      data = await response.json()
-        .then(j => responseParser.parse(j))
+      data = await response
+        .json()
+        .then(j => create(j, GqlResponse))
         .catch(() => undefined);
     }
 
@@ -90,11 +91,11 @@ export function gqlRequest<T>(
     }
     if (data.errors) {
       return ['gql', data.errors.map(e => {
-        return new GqlError(e.extensions.errorData.code, e.message);
+        return new GqlError(e.extensions.errorData.code, e.message || undefined);
       })];
     }
     try {
-      return ['ok', parser.parse(data.data)];
+      return ['ok', create(data.data, struct)];
     } catch (e) {
       return ['invalid-data', e];
     }
