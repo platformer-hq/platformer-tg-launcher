@@ -6,13 +6,15 @@ import { Bootstrapper } from '@/components/Bootstrapper/Bootstrapper.js';
 
 import './App.scss';
 
-export function App(props: {
-  appId: number | null | undefined;
+export interface AppProps {
+  appId?: Maybe<number>;
   baseUrl: string;
-  initData: string;
+  initData?: Maybe<string>;
   launchParams: string;
   platform: Platform;
-}) {
+}
+
+export function App(props: AppProps) {
   return (
     <main
       classList={{
