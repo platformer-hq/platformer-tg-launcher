@@ -22,7 +22,7 @@
     "@telegram-apps/sdk-solid": "^2.0.20",
     "eruda": "^3.0.1",
     "solid-js": "^1.9.3",
-    "zod": "^3.24.1"
+    "superstruct": "^2.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
