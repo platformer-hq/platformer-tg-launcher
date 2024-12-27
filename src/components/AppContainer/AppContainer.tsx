@@ -1,8 +1,6 @@
 import { onCleanup, onMount } from 'solid-js';
 import { postEvent } from '@telegram-apps/sdk-solid';
-import { create } from 'superstruct';
-
-import { MiniAppsEvent } from '@/validation/MiniAppsEvent.js';
+import { any, create, object, string } from 'superstruct';
 
 import './AppContainer.scss';
 
@@ -24,7 +22,10 @@ export function AppContainer(props: { url: string }) {
 
     const onMessage = ({ data, source }: MessageEvent) => {
       try {
-        const payload = create(JSON.parse(data), MiniAppsEvent);
+        const payload = create(JSON.parse(data), object({
+          eventType: string(),
+          eventData: any(),
+        }));
         if (source === contentWindow) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (postEvent as any)(payload.eventType, payload.eventData);
