@@ -2,7 +2,7 @@
 import { render } from 'solid-js/web';
 import { retrieveLaunchParams, serializeLaunchParams } from '@telegram-apps/sdk-solid';
 
-import { Root } from '@/components/Root.js';
+import { Root } from '@/components/Root/Root.js';
 import { init } from '@/init.js';
 
 import './index.scss';
