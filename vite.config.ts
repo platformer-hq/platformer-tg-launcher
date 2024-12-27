@@ -14,7 +14,7 @@ export default defineConfig({
     tsconfigPaths(),
     // Create a custom SSL certificate valid for the local machine.
     // https://www.npmjs.com/package/vite-plugin-mkcert
-    mkcert(),
+    process.env.HTTPS ? mkcert() : undefined,
   ],
   build: {
     target: 'esnext',
