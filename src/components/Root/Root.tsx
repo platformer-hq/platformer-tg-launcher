@@ -1,9 +1,11 @@
 import { ErrorBoundary, Switch, Match } from 'solid-js';
 import type { Platform } from '@telegram-apps/sdk-solid';
 
-import { InvalidAppID } from '@/components/InvalidAppID/InvalidAppID.js';
-import { InvalidInitData } from '@/components/InvalidInitData/InvalidInitData.js';
+import { InvalidAppID } from '@/components/InvalidAppID.js';
+import { InvalidInitData } from '@/components/InvalidInitData.js';
 import { BootstrapApp } from '@/components/BootstrapApp.js';
+
+import './Root.scss';
 
 function ErrorBoundaryError(error: unknown) {
   return (
@@ -26,10 +28,29 @@ function ErrorBoundaryError(error: unknown) {
 }
 
 export function Root(props: {
+  /**
+   * The application identifier to display.
+   */
   appId?: Maybe<number>;
+  /**
+   * API base URL.
+   */
   baseUrl: string;
+  /**
+   * Fallback URL to use in case something went wrong with Platformer.
+   */
+  fallbackUrl?: Maybe<string>;
+  /**
+   * Mini app init data.
+   */
   initData?: Maybe<string>;
+  /**
+   * Mini app launch parameters.
+   */
   launchParams: string;
+  /**
+   * Mini Apps platform name.
+   */
   platform: Platform;
 }) {
   return (
