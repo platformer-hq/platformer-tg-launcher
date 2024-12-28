@@ -38,6 +38,7 @@
     "imagemin-cli": "^8.0.0",
     "imagemin-pngquant": "^10.0.0",
     "sass-embedded": "^1.83.0",
+    "sharp": "^0.33.5",
     "solid-devtools": "^0.30.1",
     "typescript": "^5.4.4",
     "typescript-eslint": "^7.8.0",
