@@ -27,10 +27,10 @@ render(() => (
     appId={parseInt(searchParams.get('app_id') || '', 10)}
     baseUrl={baseUrl}
     platform={lp.platform}
+    fallbackUrl={searchParams.get('fallback_url')}
     // TODO: We should use launch params raw representation. Otherwise, we may lose some
     //  useful data.
     launchParams={serializeLaunchParams(lp)}
     initData={lp.initDataRaw}
   />
 ), document.getElementById('root')!);
-

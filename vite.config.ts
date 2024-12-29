@@ -3,6 +3,8 @@ import solidPlugin from 'vite-plugin-solid';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import mkcert from 'vite-plugin-mkcert';
 
+import { imagePlugin } from './plugins/imagePlugin';
+
 export default defineConfig({
   plugins: [
     // Uncomment the following line to enable solid-devtools.
@@ -15,6 +17,7 @@ export default defineConfig({
     // Create a custom SSL certificate valid for the local machine.
     // https://www.npmjs.com/package/vite-plugin-mkcert
     process.env.HTTPS ? mkcert() : undefined,
+    imagePlugin(),
   ],
   build: {
     target: 'esnext',
