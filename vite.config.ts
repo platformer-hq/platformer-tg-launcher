@@ -3,7 +3,7 @@ import solidPlugin from 'vite-plugin-solid';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import mkcert from 'vite-plugin-mkcert';
 
-import { imagePlugin } from './plugins/imagePlugin';
+import { imagePlugin } from './plugins/imagePlugin/imagePlugin';
 
 export default defineConfig({
   plugins: [

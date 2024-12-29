@@ -1,5 +1,5 @@
-// /* @refresh reload */
-// import { render } from 'solid-js/web';
+/* @refresh reload */
+import { render } from 'solid-js/web';
 // import { retrieveLaunchParams, serializeLaunchParams } from '@telegram-apps/sdk-solid';
 //
 // import { Root } from '@/components/Root/Root.js';
@@ -40,3 +40,7 @@
 import image from './sad@3x.png?process';
 
 console.log(image);
+
+render(() => (
+  <img src={image.src} srcSet={image.srcSet}/>
+), document.getElementById('root')!);
