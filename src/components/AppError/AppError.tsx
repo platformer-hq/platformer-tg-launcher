@@ -1,7 +1,6 @@
 import { type JSXElement, Show } from 'solid-js';
 
-import { createImgSources } from '@/helpers/createImgSources.js';
-
+import image from './sad.png?process';
 import './AppError.scss';
 
 export function AppError(props: {
@@ -13,7 +12,10 @@ export function AppError(props: {
       <img
         class="app-error__image"
         alt="Something went wrong"
-        {...createImgSources('/img/sad/sad', '.png', 176, 176)}
+        width={image.width}
+        height={image.height}
+        src={image.src}
+        srcSet={image.srcSet}
       />
       <h1 class="app-error__title">
         {props.title}
