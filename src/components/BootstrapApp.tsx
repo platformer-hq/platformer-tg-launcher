@@ -7,7 +7,7 @@ import { AppContainer } from '@/components/AppContainer/AppContainer.js';
  */
 export function BootstrapApp(props: {
   appId: number;
-  baseUrl: string;
+  apiBaseURL: string;
   initData: string;
   launchParams: string;
 }) {

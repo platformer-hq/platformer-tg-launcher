@@ -43,14 +43,14 @@ export type GqlRequestResult<T> = GqlRequestSuccess<T> | GqlRequestError
  * Performs a GraphQL request.
  *
  * This function is not throwing errors, but returns them.
- * @param baseUrl - URL to send request to.
+ * @param apiBaseURL - URL to send request to.
  * @param query - GraphQL query.
  * @param variables - query variables.
  * @param struct - structure used to validate the response.
  * @param options - additional options.
  */
 export function gqlRequest<T, S>(
-  baseUrl: string,
+  apiBaseURL: string,
   query: string,
   variables: Record<string, unknown>,
   struct: Struct<T, S>,
@@ -59,7 +59,7 @@ export function gqlRequest<T, S>(
   return CancelablePromise.withFn(async signal => {
     let response: Response;
     try {
-      response = await fetch(baseUrl, {
+      response = await fetch(apiBaseURL, {
         signal,
         method: 'POST',
         headers: {

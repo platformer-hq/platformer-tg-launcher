@@ -20,7 +20,7 @@ export function GetAuthToken(props: {
   Loading: Component;
   UnknownError: Component;
   appId: number;
-  baseUrl: string;
+  apiBaseURL: string;
   children: (authToken: () => {
     token: string;
     expiresAt: Date;
@@ -28,7 +28,7 @@ export function GetAuthToken(props: {
   initData: string;
 }) {
   const [resource] = createResource(
-    () => ({ appId: props.appId, baseUrl: props.baseUrl, initData: props.initData }),
+    () => ({ appId: props.appId, apiBaseURL: props.apiBaseURL, initData: props.initData }),
     async (meta) => {
       // Try to retrieve previously saved token.
       const authToken = await getAuthToken({ timeout: 5000 }).catch((e) => {
@@ -38,7 +38,7 @@ export function GetAuthToken(props: {
       return authToken
         ? ['ok', authToken] as ['ok', typeof authToken]
         // Authenticate using Platformer API.
-        : authenticate(meta.baseUrl, meta.appId, meta.initData);
+        : authenticate(meta.apiBaseURL, meta.appId, meta.initData);
     },
   );
 

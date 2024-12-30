@@ -35,7 +35,7 @@ export function Root(props: {
   /**
    * API base URL.
    */
-  baseUrl: string;
+  apiBaseURL: string;
   /**
    * Fallback URL to use in case something went wrong with Platformer.
    */
@@ -80,7 +80,7 @@ export function Root(props: {
             {tuple => (
               <BootstrapApp
                 appId={tuple()[0]}
-                baseUrl={props.baseUrl}
+                apiBaseURL={props.apiBaseURL}
                 launchParams={props.launchParams}
                 initData={tuple()[1]}
               />

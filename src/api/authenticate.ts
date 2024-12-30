@@ -6,19 +6,19 @@ import { AuthToken } from '@/validation/AuthToken.js';
 
 /**
  * Authenticates the current user.
- * @param baseUrl - API base URL.
+ * @param apiBaseURL - API base URL.
  * @param appId - application identifier to validate the init data.
  * @param initData - init data.
  * @param options - additional options.
  */
 export function authenticate(
-  baseUrl: string,
+  apiBaseURL: string,
   appId: number,
   initData: string,
   options?: AsyncOptions,
 ): CancelablePromise<GqlRequestResult<{ token: string; expiresAt: Date }>> {
   return gqlRequest(
-    baseUrl,
+    apiBaseURL,
     'mutation ($appId: Int, $initData: String!) {'
     + ' authenticateTelegram(appID: $appId, initData: $initData) {'
     + '  token'

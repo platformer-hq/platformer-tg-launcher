@@ -15,7 +15,7 @@ const searchParams = new URLSearchParams(
 );
 
 // Compute the base URL for API requests. It can either be a relative or absolute path.
-const baseUrl = new URL(
+const apiBaseURL = new URL(
   searchParams.get('api_base_url') || 'https://platformer.tg/api/gql',
   window.location.origin,
 ).toString();
@@ -25,7 +25,7 @@ init(lp.startParam === 'debug' || import.meta.env.DEV);
 render(() => (
   <Root
     appId={parseInt(searchParams.get('app_id') || '', 10)}
-    baseUrl={baseUrl}
+    apiBaseURL={apiBaseURL}
     platform={lp.platform}
     fallbackUrl={searchParams.get('fallback_url')}
     // TODO: We should use launch params raw representation. Otherwise, we may lose some

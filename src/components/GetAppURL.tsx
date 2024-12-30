@@ -14,19 +14,19 @@ export function GetAppURL(props: {
   NoURL: Component;
   appId: number;
   authToken: string;
-  baseUrl: string;
+  apiBaseURL: string;
   children: (url: () => string) => JSXElement;
   launchParams: string;
 }) {
   const [resource] = createResource(
     () => ({
       appId: props.appId,
-      baseUrl: props.baseUrl,
+      apiBaseURL: props.apiBaseURL,
       authToken: props.authToken,
       launchParams: props.launchParams,
     }),
     (meta) => getAppUrl(
-      meta.baseUrl,
+      meta.apiBaseURL,
       meta.authToken,
       meta.appId,
       meta.launchParams,
