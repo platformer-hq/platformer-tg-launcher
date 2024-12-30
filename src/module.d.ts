@@ -1,10 +1,14 @@
 declare module '*.png?process' {
+  interface ImageVariant {
+    src: string;
+    srcSet: string;
+  }
+
   export default {} as {
     blurDataURL: string;
     height: number;
-    mime: 'image/png';
-    src: string;
-    srcSet: string;
+    webp: ImageVariant;
+    png: ImageVariant;
     width: number;
   };
 }

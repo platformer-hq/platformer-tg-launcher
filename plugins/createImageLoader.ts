@@ -2,16 +2,6 @@ import sharp, { type Sharp } from 'sharp';
 import { readFileSync } from 'node:fs';
 
 /**
- * Creates a key for cache.
- * @param path - original image absolute path
- * @param initialScale - original image initial scale
- * @param scale - target image scale
- */
-function formatKey(path: string, initialScale: number, scale: number): string {
-  return `${path}-${initialScale}-${scale}`;
-}
-
-/**
  * @returns A function loading images from filesystem, rescaling and compressing them.
  */
 export function createImageLoader() {
@@ -19,22 +9,30 @@ export function createImageLoader() {
     width: number;
     height: number;
   }]>();
-  const processed = new Map<string, [image: Sharp, meta: {
+  const processed = new Map<string, {
     width: number;
     height: number;
-    buffer: Buffer;
-  }]>();
+    webp: Buffer;
+    png: Buffer;
+    blurDataURL: string;
+  }>();
 
-  return async function loadImage(path: string, initialScale: number, scale: number) {
+  return async function loadImage(options: {
+    path: string;
+    initialScale: number;
+    scale: number;
+  }) {
+    const { scale, initialScale, path } = options;
+
     // Step 1: Retrieve a cached value.
-    const key = formatKey(path, initialScale, scale);
-    const cached = processed.get(key);
+    const cacheKey = `${path}-${initialScale}-${scale}`;
+    const cached = processed.get(cacheKey);
     if (cached) {
       return cached;
     }
 
     // Step 2: Retrieve the initial image.
-    const initialKey = formatKey(path, initialScale, initialScale);
+    const initialKey = `${path}-${initialScale}`;
     let initialTuple = initials.get(initialKey);
     if (!initialTuple) {
       const initialSharp = sharp(readFileSync(path));
@@ -47,17 +45,20 @@ export function createImageLoader() {
     const [initial, initialMeta] = initialTuple;
     const width = initialMeta.width * scale / initialScale | 0;
     const height = initialMeta.height * scale / initialScale | 0;
-    const resized = initial
-      .clone()
-      .resize({ width, height })
-      .png({ compressionLevel: 6, quality: 60 });
-
-    const result = [resized, {
+    const resized = initial.clone().resize({ width, height });
+    const result = {
       width,
       height,
-      buffer: await resized.toBuffer(),
-    }] as [Sharp, { width: number; height: number; buffer: Buffer }];
-    processed.set(formatKey(path, initialScale, scale), result);
+      png: await resized.clone().png({ compressionLevel: 6, quality: 60 }).toBuffer(),
+      webp: await resized.webp({ quality: 60 }).toBuffer(),
+      blurDataURL: `data:image/png;base64,${await initial
+        .clone()
+        .blur()
+        .resize(10)
+        .toBuffer()
+        .then(buffer => buffer.toString('base64'))}`
+    };
+    processed.set(cacheKey, result);
 
     return result;
   };

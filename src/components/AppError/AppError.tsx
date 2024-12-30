@@ -7,16 +7,15 @@ export function AppError(props: {
   title: JSXElement;
   subtitle?: JSXElement;
 }) {
+  const { webp, height, width, png } = image;
+  const size = { width, height };
+
   return (
     <div class="app-error">
-      <img
-        class="app-error__image"
-        alt="Something went wrong"
-        width={image.width}
-        height={image.height}
-        src={image.src}
-        srcSet={image.srcSet}
-      />
+      <picture>
+        <source class="app-error__image" type="image/webp" {...webp} {...size}/>
+        <img class="app-error__image" alt="Something went wrong" {...png} {...size}/>
+      </picture>
       <h1 class="app-error__title">
         {props.title}
       </h1>

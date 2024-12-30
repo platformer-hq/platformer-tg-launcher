@@ -3,12 +3,16 @@ import type { Plugin } from 'vite';
 
 import { createImageLoader } from './createImageLoader';
 
+interface ImageVariant {
+  src: string;
+  srcSet: string;
+}
+
 export interface ProcessedImage {
   blurDataURL: string;
   height: number;
-  mime: 'image/png';
-  src: string;
-  srcSet: string;
+  webp: ImageVariant;
+  png: ImageVariant;
   width: number;
 }
 
@@ -88,7 +92,10 @@ export function imagePlugin({
       }
       const [, path, query] = match;
       const searchParams = new URLSearchParams(query);
-      if (!path.endsWith('.png') || !searchParams.has('process')) {
+      if (
+        !searchParams.has('process')
+        || !['.png', '.webp'].some(ext => path.endsWith(ext))
+      ) {
         return;
       }
 
@@ -124,71 +131,76 @@ export function imagePlugin({
         }
       }
 
-      let src: string;
-      let srcSet: string;
-      const [image, imageMeta] = await loadImage(path, initialScale, scales[0]);
+      const image = await loadImage({
+        path,
+        initialScale,
+        scale: scales[0],
+      });
 
-      if (isBuild) {
-        // In build mode we should create Rollup file URL references. To do this, we
-        // are using Rollup's emitFile function to generate new static assets to reference
-        // them in the future.
+      const [webp, png] = await Promise.all(
+        (['webp', 'png'] as const).map(async format => {
+          let src: string;
+          let srcSet: string;
 
-        const { name, ext } = parse(path);
+          if (isBuild) {
+            // In build mode we should create Rollup file URL references. To do this, we
+            // are using Rollup's emitFile function to generate new static assets to reference
+            // them in the future.
+            const { name } = parse(path);
 
-        // We are inserting a raw non-escaped value, because Rollup will replace it with an
-        // escaped string.
-        src = `import.meta.ROLLUP_FILE_URL_${this.emitFile({
-          type: 'asset',
-          name: `${name}${ext}`,
-          source: await image.toBuffer(),
-        })}`;
+            // We are inserting a raw non-escaped value, because Rollup will replace it with an
+            // escaped string.
+            src = `import.meta.ROLLUP_FILE_URL_${this.emitFile({
+              type: 'asset',
+              name: `${name}.${format}`,
+              source: image[format],
+            })}`;
 
-        // Here, we are doing the same as we did above, but as long as srcSet is a string,
-        // we should add some more raw JS code to properly generate the value.
-        srcSet = `[${await Promise
-          .all(
-            scales.map(async scale => {
-              const [, { buffer }] = await loadImage(path, initialScale, scale);
-              return `import.meta.ROLLUP_FILE_URL_${this.emitFile({
-                type: 'asset',
-                name: `${name}@${scale}x${ext}`,
-                source: buffer,
-              })} + ' ${scale}x'`;
-            }),
-          )
-          .then(items => items.join(', '))}].join(', ')`;
-      } else {
-        const pathWithRescale = (scale: number) => {
-          return `${assetsBaseUrl}?${new URLSearchParams([
-            ['path', path],
-            ['initialScale', `${initialScale}`],
-            ['scale', `${scale}`],
-          ]).toString()}`;
-        };
+            // Here, we are doing the same as we did above, but as long as srcSet is a string,
+            // we should add some more raw JS code to properly generate the value.
+            srcSet = `[${await Promise
+              .all(
+                scales.map(async scale => {
+                  const scaleImage = await loadImage({ path, initialScale, scale });
+                  return `import.meta.ROLLUP_FILE_URL_${this.emitFile({
+                    type: 'asset',
+                    name: `${name}@${scale}x.${format}`,
+                    source: scaleImage[format],
+                  })} + ' ${scale}x'`;
+                }),
+              )
+              .then(items => items.join(', '))}].join(', ')`;
+          } else {
+            const pathWithRescale = (scale: number) => {
+              return `${assetsBaseUrl}?${new URLSearchParams([
+                ['path', path],
+                ['initialScale', `${initialScale}`],
+                ['scale', `${scale}`],
+                ['format', format]
+              ]).toString()}`;
+            };
 
-        // In dev mode we are just making URLs referencing to the plugin's dev server.
-        src = JSON.stringify(pathWithRescale(1));
-        srcSet = JSON.stringify(
-          scales
-            .map(scale => `${pathWithRescale(scale)} ${scale}x`)
-            .join(', '),
-        );
-      }
+            // In dev mode we are just making URLs referencing to the plugin's dev server.
+            src = JSON.stringify(pathWithRescale(1));
+            srcSet = JSON.stringify(
+              scales
+                .map(scale => `${pathWithRescale(scale)} ${scale}x`)
+                .join(', '),
+            );
+          }
+
+          return `{"src": ${src}, "srcSet": ${srcSet}}`;
+        }),
+      );
 
       return `export default { 
         ...${JSON.stringify({
-        width: imageMeta.width,
-        height: imageMeta.height,
-        mime: 'image/png',
-        blurDataURL: `data:image/png;base64,${await image
-          .clone()
-          .blur()
-          .resize(10)
-          .toBuffer()
-          .then(buffer => buffer.toString('base64'))}`,
-      } satisfies Omit<ProcessedImage, 'src' | 'srcSet'>)}, 
-        src: ${src}, 
-        srcSet: ${srcSet},
+        width: image.width,
+        height: image.height,
+        blurDataURL: image.blurDataURL,
+      } satisfies Omit<ProcessedImage, 'webp' | 'png'>)}, 
+        webp: ${webp}, 
+        png: ${png},
        };`;
     },
     configureServer(server) {
@@ -213,9 +225,14 @@ export function imagePlugin({
             throw new Error('"initialScale" is invalid');
           }
 
-          const [, { buffer }] = await loadImage(path, initialScale, scale);
-          res.writeHead(200, { 'Content-Type': 'image/png' });
-          res.end(buffer);
+          const format = searchParams.get('format');
+          if (!['webp', 'png'].includes(format)) {
+            throw new Error('"format" is invalid');
+          }
+
+          const image = await loadImage({ path, initialScale, scale });
+          res.writeHead(200, { 'Content-Type': `image/${format}` });
+          res.end(image[format]);
         },
       );
     },
