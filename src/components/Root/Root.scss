@@ -1,12 +1,5 @@
 .root {
-  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen',
-  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-  sans-serif;
   height: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
-
   background: var(--tg-theme-background-color, #111);
   color: var(--tg-theme-text-color, 'white');
 

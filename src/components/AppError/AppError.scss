@@ -10,7 +10,10 @@
 
   &__image {
     display: block;
-    margin: -20px 0 10px;
+
+    &-container {
+      margin: -20px 0 10px;
+    }
   }
 
   &__title {

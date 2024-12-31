@@ -1,7 +1,10 @@
 body {
-  /*background: var(--tg-theme-secondary-bg-color, white);*/
-  /*color: var(--tg-theme-text-color, black);*/
-
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
   padding: 0;
   margin: 0;
 

@@ -12,7 +12,7 @@ export function AppError(props: {
 
   return (
     <div class="app-error">
-      <picture>
+      <picture class="app-error__image-container">
         <source class="app-error__image" type="image/webp" {...webp} {...size}/>
         <img class="app-error__image" alt="Something went wrong" {...png} {...size}/>
       </picture>
