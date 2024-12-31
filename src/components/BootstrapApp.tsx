@@ -6,7 +6,7 @@ import { AppContainer } from '@/components/AppContainer/AppContainer.js';
  * Performs complete application load lifecycle.
  */
 export function BootstrapApp(props: {
-  appId: number;
+  appID: number;
   apiBaseURL: string;
   initData: string;
   launchParams: string;

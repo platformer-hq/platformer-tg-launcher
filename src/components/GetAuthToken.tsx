@@ -19,7 +19,7 @@ export function GetAuthToken(props: {
   AppNotFound: Component;
   Loading: Component;
   UnknownError: Component;
-  appId: number;
+  appID: number;
   apiBaseURL: string;
   children: (authToken: () => {
     token: string;
@@ -28,7 +28,7 @@ export function GetAuthToken(props: {
   initData: string;
 }) {
   const [resource] = createResource(
-    () => ({ appId: props.appId, apiBaseURL: props.apiBaseURL, initData: props.initData }),
+    () => ({ appID: props.appID, apiBaseURL: props.apiBaseURL, initData: props.initData }),
     async (meta) => {
       // Try to retrieve previously saved token.
       const authToken = await getAuthToken({ timeout: 5000 }).catch((e) => {

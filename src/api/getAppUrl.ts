@@ -8,25 +8,25 @@ import { maybe } from '@/validation/maybe.js';
  * Retrieves the application URL.
  * @param apiBaseURL - API base URL.
  * @param authToken - authorization token.
- * @param appId - application identifier to validate the init data.
+ * @param appID - application identifier to validate the init data.
  * @param launchParams - launch parameters.
  * @param options - additional options.
  */
 export function getAppUrl(
   apiBaseURL: string,
   authToken: string,
-  appId: number,
+  appID: number,
   launchParams: string,
   options?: AsyncOptions,
 ): CancelablePromise<GqlRequestResult<[appFound: boolean, url?: Maybe<string>]>> {
   return gqlRequest(
     apiBaseURL,
-    'query ($appId: Int!, $launchParams: String!) {'
-    + ' app(appID: $appId) {'
+    'query ($appID: Int!, $launchParams: String!) {'
+    + ' app(appID: $appID) {'
     + '  telegramURL(launchParams: $launchParams)'
     + ' }'
     + '}',
-    { appId, launchParams },
+    { appID, launchParams },
     object({
       app: maybe(object({
         telegramURL: maybe(string()),

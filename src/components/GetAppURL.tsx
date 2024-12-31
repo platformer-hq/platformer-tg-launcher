@@ -12,7 +12,7 @@ export function GetAppURL(props: {
   Error: Component;
   Loading: Component;
   NoURL: Component;
-  appId: number;
+  appID: number;
   authToken: string;
   apiBaseURL: string;
   children: (url: () => string) => JSXElement;
@@ -20,7 +20,7 @@ export function GetAppURL(props: {
 }) {
   const [resource] = createResource(
     () => ({
-      appId: props.appId,
+      appID: props.appID,
       apiBaseURL: props.apiBaseURL,
       authToken: props.authToken,
       launchParams: props.launchParams,
@@ -28,7 +28,7 @@ export function GetAppURL(props: {
     (meta) => getAppUrl(
       meta.apiBaseURL,
       meta.authToken,
-      meta.appId,
+      meta.appID,
       meta.launchParams,
       { timeout: 5000 },
     ));
