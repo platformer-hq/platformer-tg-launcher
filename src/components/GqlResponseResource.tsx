@@ -2,14 +2,12 @@ import {
   type Accessor,
   type Component,
   type JSXElement,
-  Match,
   type Resource,
   Show,
-  Switch,
 } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 
-import { splitGqlResponse } from '@/helpers/splitGqlResponse.js';
+import { splitExecutionTuple } from '@/helpers/splitExecutionTuple.js';
 import type { GqlRequestError, GqlRequestResult } from '@/api/gqlRequest.js';
 
 /**
@@ -26,17 +24,12 @@ export function GqlResponseResource<T>(props: {
       when={props.resource.state === 'ready' ? props.resource() : undefined}
       fallback={<Dynamic component={props.Loading}/>}
     >
-      {data => {
-        const [okData, errData] = splitGqlResponse(data);
+      {resourceData => {
+        const [data, error] = splitExecutionTuple(resourceData);
         return (
-          <Switch>
-            <Match when={okData()}>
-              {props.children}
-            </Match>
-            <Match when={errData()}>
-              {props.Error}
-            </Match>
-          </Switch>
+          <Show when={data.ok() && data()} fallback={props.Error(error)}>
+            {props.children}
+          </Show>
         );
       }}
     </Show>
