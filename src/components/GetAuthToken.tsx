@@ -36,16 +36,16 @@ export function GetAuthToken(props: {
       });
 
       return authToken
-        ? ['ok', authToken] as ['ok', typeof authToken]
+        ? [true, authToken] as [true, typeof authToken]
         // Authenticate using Platformer API.
-        : authenticate(meta.apiBaseURL, meta.appId, meta.initData);
+        : authenticate(meta.apiBaseURL, meta.appID, meta.initData);
     },
   );
 
   createEffect(() => {
     if (resource.state === 'ready') {
       const data = resource();
-      if (data[0] === 'ok') {
+      if (data[0]) {
         // We don't wait for the token to be saved, it is not really important.
         const promise = saveAuthToken(data[1].token, data[1].expiresAt).catch(e => {
           console.error('saveAuthToken returned error:', e);
@@ -66,8 +66,6 @@ export function GetAuthToken(props: {
           const v = error();
           return v[0] === 'gql' && v[1].some(err => err.code === 'ERR_APP_NOT_FOUND');
         };
-
-        console.warn(error())
 
         return (
           <Show when={isAppNotFound()} fallback={<Dynamic component={props.UnknownError}/>}>
