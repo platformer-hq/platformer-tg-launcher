@@ -19,10 +19,10 @@ function Inner() {
   const lp = retrieveLaunchParams();
   const [args, error] = splitExecutionTuple<{
     appID: number;
-    apiBaseURL?: Maybe<string>;
+    apiBaseURL: string;
     fallbackURL?: Maybe<string>;
-    initTimeout?: Maybe<number>;
-    loadTimeout?: Maybe<number>;
+    initTimeout: number;
+    loadTimeout: number;
   }, [field: string, reason: string][]>(() => {
     try {
       const argsObj = create(
@@ -35,8 +35,8 @@ function Inner() {
             app_id: PositiveIntFromStr,
             api_base_url: defaulted(string(), 'https://platformer.tg/api/gql'),
             fallback_url: maybe(string()),
-            init_timeout: maybe(PositiveIntFromStr),
-            load_timeout: maybe(PositiveIntFromStr),
+            init_timeout: defaulted(PositiveIntFromStr, 5000),
+            load_timeout: defaulted(PositiveIntFromStr, 10000),
           }),
           instance(URLSearchParams),
           searchParams => Object.fromEntries(searchParams.entries()),
@@ -44,7 +44,7 @@ function Inner() {
       );
       return [true, {
         appID: argsObj.app_id,
-        apiBaseURL: argsObj.api_base_url,
+        apiBaseURL: new URL(argsObj.api_base_url, window.location.origin).toString(),
         fallbackURL: argsObj.fallback_url,
         initTimeout: argsObj.init_timeout,
         loadTimeout: argsObj.load_timeout,
