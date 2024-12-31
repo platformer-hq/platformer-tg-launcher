@@ -38,7 +38,7 @@ function createSignal<T, E>(
 /**
  * Splits a signal, containing the operation execution tuple into two signals, containing
  * data and error.
- * @param executionTuple - signal returning an execution result
+ * @param executionTuple - signal returning execution result.
  */
 export function splitExecutionTuple<T, E>(executionTuple: Accessor<ExecutionTuple<T, E>>): [
   SplitResultSignal<T>,
