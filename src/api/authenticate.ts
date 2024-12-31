@@ -28,7 +28,7 @@ export function authenticate(
     { appId, initData },
     object({ authenticateTelegram: AuthToken }),
     options,
-  ).then(v => v[0] === 'ok'
-    ? ['ok', v[1].authenticateTelegram]
+  ).then(v => v[0]
+    ? [true, v[1].authenticateTelegram]
     : v);
 }

@@ -1,8 +1,9 @@
-import { any, array, create, object, string, Struct } from 'superstruct';
+import { any, array, create, object, string, type Struct } from 'superstruct';
 import { type AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
 
 import { GqlError } from '@/api/GqlError.js';
 import { maybe } from '@/validation/maybe.js';
+import type { ExecutionFailedTuple, ExecutionTuple } from '@/types/execution.js';
 
 interface GqlErrorShape {
   message?: Maybe<string>;
@@ -37,7 +38,11 @@ export type GqlRequestError =
 
 export type GqlRequestSuccess<T> = [type: 'ok', data: T];
 
-export type GqlRequestResult<T> = GqlRequestSuccess<T> | GqlRequestError
+export type GqlRequestResult<T> = ExecutionTuple<T, GqlRequestError>;
+
+function toFailedExecutionTuple<T>(error: T): ExecutionFailedTuple<T> {
+  return [false, error];
+}
 
 /**
  * Performs a GraphQL request.
@@ -69,7 +74,7 @@ export function gqlRequest<T, S>(
         body: JSON.stringify({ query, variables }),
       });
     } catch (e) {
-      return ['fetch', e];
+      return toFailedExecutionTuple(['fetch', e]);
     }
 
     let data: {
@@ -85,19 +90,21 @@ export function gqlRequest<T, S>(
 
     if (!data) {
       const { status } = response;
-      return status < 200 || status >= 400
-        ? ['http', status, response.statusText]
-        : ['invalid-data', new Error('Invalid response')];
+      return toFailedExecutionTuple(
+        status < 200 || status >= 400
+          ? ['http', status, response.statusText]
+          : ['invalid-data', new Error('Invalid response')],
+      );
     }
     if (data.errors) {
-      return ['gql', data.errors.map(e => {
+      return toFailedExecutionTuple(['gql', data.errors.map(e => {
         return new GqlError(e.extensions.errorData.code, e.message || undefined);
-      })];
+      })]);
     }
     try {
-      return ['ok', create(data.data, struct)];
+      return [true, create(data.data, struct)];
     } catch (e) {
-      return ['invalid-data', e];
+      return toFailedExecutionTuple(['invalid-data', e]);
     }
   }, options);
 }

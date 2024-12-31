@@ -33,7 +33,7 @@ export function getAppUrl(
       })),
     }),
     { ...options, authToken },
-  ).then(v => v[0] === 'ok'
-    ? ['ok', v[1].app ? [true, v[1].app.telegramURL] : [false]]
+  ).then(v => v[0]
+    ? [true, v[1].app ? [true, v[1].app.telegramURL] : [false]]
     : v);
 }
