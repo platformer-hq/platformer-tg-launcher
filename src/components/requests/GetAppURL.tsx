@@ -2,7 +2,7 @@ import { type Component, createResource, type JSXElement, Match, Switch } from '
 import { Dynamic } from 'solid-js/web';
 
 import { getAppUrl } from '@/api/getAppUrl.js';
-import { GqlResponseResource } from '@/components/GqlResponseResource.js';
+import { GqlResponseResource } from '@/components/requests/GqlResponseResource.js';
 
 /**
  * Retrieves the application URL.

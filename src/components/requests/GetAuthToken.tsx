@@ -11,7 +11,7 @@ import { Dynamic } from 'solid-js/web';
 
 import { getAuthToken, saveAuthToken } from '@/storage/auth-token.js';
 import { authenticate } from '@/api/authenticate.js';
-import { GqlResponseResource } from '@/components/GqlResponseResource.js';
+import { GqlResponseResource } from '@/components/requests/GqlResponseResource.js';
 import type { GqlRequestError } from '@/api/gqlRequest.js';
 
 /**
