@@ -1,4 +1,4 @@
-.app-error {
+.status-page {
   height: 100%;
   display: flex;
   align-items: center;
@@ -9,11 +9,7 @@
   margin: 0 auto;
 
   &__image {
-    display: block;
-
-    &-container {
-      margin: -20px 0 10px;
-    }
+    margin: -20px 0 10px;
   }
 
   &__title {
