@@ -7,6 +7,7 @@ export function AppNoURL() {
     <StatusPage
       image={image}
       title="Nothing here"
+      subtitle="The application is inaccessible on your device"
     />
   );
 }
