@@ -1,5 +1,4 @@
 import {
-  type Component,
   createEffect,
   createResource,
   type JSXElement,
@@ -7,28 +6,28 @@ import {
   Show,
   splitProps,
 } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
 
 import { getAuthToken, saveAuthToken } from '@/storage/auth-token.js';
 import { authenticate } from '@/api/authenticate.js';
-import { GqlResponseResource } from '@/components/requests/GqlResponseResource.js';
-import type { GqlRequestError } from '@/api/gqlRequest.js';
+import {
+  GqlResponseResource,
+  type GqlResponseResourceProps,
+} from '@/components/requests/GqlResponseResource.js';
+
+interface Props extends Pick<
+  GqlResponseResourceProps<{ token: string; expiresAt: Date }>,
+  'error' | 'loading' | 'children'
+> {
+  apiBaseURL: string;
+  appID: number;
+  appNotFound: JSXElement;
+  initData: string;
+}
 
 /**
  * Retrieves the auth token and passes it to the children.
  */
-export function GetAuthToken(props: {
-  AppNotFound: Component;
-  Loading: Component;
-  UnknownError: Component<{ error: GqlRequestError }>;
-  apiBaseURL: string;
-  appID: number;
-  children: (authToken: () => {
-    token: string;
-    expiresAt: Date;
-  }) => JSXElement;
-  initData: string;
-}) {
+export function GetAuthToken(props: Props) {
   const [pickedProps] = splitProps(props, ['appID', 'apiBaseURL', 'initData']);
   const [resource] = createResource(
     () => pickedProps,
@@ -64,18 +63,15 @@ export function GetAuthToken(props: {
   return (
     <GqlResponseResource
       {...props}
-      Error={error => {
+      error={error => {
         const isAppNotFound = () => {
           const v = error();
           return v[0] === 'gql' && v[1].some(err => err.code === 'ERR_APP_NOT_FOUND');
         };
 
         return (
-          <Show
-            when={isAppNotFound()}
-            fallback={<Dynamic component={props.UnknownError} error={error()}/>
-          }>
-            <Dynamic component={props.AppNotFound}/>
+          <Show when={isAppNotFound()} fallback={props.error(error)}>
+            {props.appNotFound}
           </Show>
         );
       }}

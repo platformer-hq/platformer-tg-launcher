@@ -1,30 +1,30 @@
-import { type Component, createResource, type JSXElement, Match, Switch } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { createResource, type JSXElement, Match, splitProps, Switch } from 'solid-js';
 
 import { getAppUrl } from '@/api/getAppUrl.js';
-import { GqlResponseResource } from '@/components/requests/GqlResponseResource.js';
+import {
+  GqlResponseResource,
+  type GqlResponseResourceProps,
+} from '@/components/requests/GqlResponseResource.js';
+
+interface Props extends Pick<
+  GqlResponseResourceProps<string>,
+  'error' | 'loading' | 'children'
+> {
+  apiBaseURL: string;
+  appID: number;
+  appNotFound: JSXElement;
+  authToken: string;
+  launchParams: string;
+  noURL: JSXElement;
+}
 
 /**
  * Retrieves the application URL.
  */
-export function GetAppURL(props: {
-  AppNotFound: Component;
-  Error: Component;
-  Loading: Component;
-  NoURL: Component;
-  appID: number;
-  authToken: string;
-  apiBaseURL: string;
-  children: (url: () => string) => JSXElement;
-  launchParams: string;
-}) {
+export function GetAppURL(props: Props) {
+  const [picked] = splitProps(props, ['appID', 'apiBaseURL', 'authToken', 'launchParams']);
   const [resource] = createResource(
-    () => ({
-      appID: props.appID,
-      apiBaseURL: props.apiBaseURL,
-      authToken: props.authToken,
-      launchParams: props.launchParams,
-    }),
+    () => picked,
     (meta) => getAppUrl(
       meta.apiBaseURL,
       meta.authToken,
@@ -36,9 +36,9 @@ export function GetAppURL(props: {
   return (
     <GqlResponseResource {...props} resource={resource}>
       {data => (
-        <Switch fallback={<Dynamic component={props.NoURL}/>}>
+        <Switch fallback={props.noURL}>
           <Match when={!data()[0]}>
-            <Dynamic component={props.AppNotFound}/>
+            {props.appNotFound}
           </Match>
           <Match when={data()[1]}>
             {props.children}

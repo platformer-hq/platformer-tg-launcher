@@ -1,33 +1,36 @@
 import {
   type Accessor,
-  type Component,
+  type FlowProps,
   type JSXElement,
   type Resource,
   Show,
 } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
 
 import { splitExecutionTuple } from '@/helpers/splitExecutionTuple.js';
 import type { GqlRequestError, GqlRequestResult } from '@/api/gqlRequest.js';
 
+export type GqlResponseResourceProps<T> = FlowProps<
+  {
+    error: (err: Accessor<GqlRequestError>) => JSXElement;
+    loading: JSXElement;
+    resource: Resource<GqlRequestResult<T>>;
+  },
+  (data: Accessor<T>) => JSXElement
+>;
+
 /**
  * Accepts a resource containing a GraphQL request result and displays a view depending on it.
  */
-export function GqlResponseResource<T>(props: {
-  Error: (err: Accessor<GqlRequestError>) => JSXElement;
-  Loading: Component;
-  children: (data: Accessor<T>) => JSXElement;
-  resource: Resource<GqlRequestResult<T>>;
-}) {
+export function GqlResponseResource<T>(props: GqlResponseResourceProps<T>) {
   return (
     <Show
       when={props.resource.state === 'ready' ? props.resource() : undefined}
-      fallback={<Dynamic component={props.Loading}/>}
+      fallback={props.loading}
     >
       {resourceData => {
         const [data, error] = splitExecutionTuple(resourceData);
         return (
-          <Show when={data.ok() && data()} fallback={props.Error(error)}>
+          <Show when={data.ok() && data()} fallback={props.error(error)}>
             {props.children}
           </Show>
         );
