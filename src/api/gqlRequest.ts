@@ -36,8 +36,6 @@ export type GqlRequestError =
   | [type: 'fetch', error: unknown]
   | [type: 'invalid-data', error: unknown];
 
-export type GqlRequestSuccess<T> = [type: 'ok', data: T];
-
 export type GqlRequestResult<T> = ExecutionTuple<T, GqlRequestError>;
 
 function toFailedExecutionTuple<T>(error: T): ExecutionFailedTuple<T> {
