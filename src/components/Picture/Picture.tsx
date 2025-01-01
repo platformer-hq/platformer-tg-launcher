@@ -8,10 +8,7 @@ interface ImageVariant {
   srcSet: string;
 }
 
-/**
- * Displays webp/png image.
- */
-export function Picture(props: {
+export interface PictureProps {
   class?: string;
   classes?: {
     root?: string;
@@ -22,7 +19,12 @@ export function Picture(props: {
   height: number;
   webp: ImageVariant;
   png: ImageVariant;
-}) {
+}
+
+/**
+ * Displays webp/png image.
+ */
+export function Picture(props: PictureProps) {
   const classes = createMemo(() => {
     return mergeClassNames({ root: ['picture', props.class] }, props.classes);
   });
