@@ -1,0 +1,12 @@
+.app-loading {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  &__image {
+    display: block;
+    margin-bottom: 20px;
+  }
+}
