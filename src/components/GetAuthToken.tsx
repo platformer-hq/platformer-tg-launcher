@@ -5,12 +5,14 @@ import {
   type JSXElement,
   onCleanup,
   Show,
+  splitProps,
 } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 
 import { getAuthToken, saveAuthToken } from '@/storage/auth-token.js';
 import { authenticate } from '@/api/authenticate.js';
 import { GqlResponseResource } from '@/components/GqlResponseResource.js';
+import type { GqlRequestError } from '@/api/gqlRequest.js';
 
 /**
  * Retrieves the auth token and passes it to the children.
@@ -18,17 +20,18 @@ import { GqlResponseResource } from '@/components/GqlResponseResource.js';
 export function GetAuthToken(props: {
   AppNotFound: Component;
   Loading: Component;
-  UnknownError: Component;
-  appID: number;
+  UnknownError: Component<{ error: GqlRequestError }>;
   apiBaseURL: string;
+  appID: number;
   children: (authToken: () => {
     token: string;
     expiresAt: Date;
   }) => JSXElement;
   initData: string;
 }) {
+  const [pickedProps] = splitProps(props, ['appID', 'apiBaseURL', 'initData']);
   const [resource] = createResource(
-    () => ({ appID: props.appID, apiBaseURL: props.apiBaseURL, initData: props.initData }),
+    () => pickedProps,
     async (meta) => {
       // Try to retrieve previously saved token.
       const authToken = await getAuthToken({ timeout: 5000 }).catch((e) => {
@@ -68,7 +71,10 @@ export function GetAuthToken(props: {
         };
 
         return (
-          <Show when={isAppNotFound()} fallback={<Dynamic component={props.UnknownError}/>}>
+          <Show
+            when={isAppNotFound()}
+            fallback={<Dynamic component={props.UnknownError} error={error()}/>
+          }>
             <Dynamic component={props.AppNotFound}/>
           </Show>
         );
