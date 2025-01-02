@@ -7,8 +7,13 @@ import './AppContainer.scss';
 /**
  * Displays the application and configures
  */
-export function AppContainer(props: { url: string }) {
+export function AppContainer(props: {
+  url: string;
+  loadTimeout: number;
+}) {
   let iframe!: HTMLIFrameElement;
+
+  // TODO: Use loadTimeout
 
   // Proxy all Mini Apps events:
   // 1. From the Telegram client to the mini app.
