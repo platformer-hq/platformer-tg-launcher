@@ -59,7 +59,7 @@ export function gqlRequest<T, S>(
   struct: Struct<T, S>,
   options?: GqlRequestOptions,
 ): CancelablePromise<GqlRequestResult<T>> {
-  return CancelablePromise.withFn(async signal => {
+  async function perform(signal: AbortSignal): Promise<GqlRequestResult<T>> {
     let response: Response;
     try {
       response = await fetch(apiBaseURL, {
@@ -104,5 +104,19 @@ export function gqlRequest<T, S>(
     } catch (e) {
       return toFailedExecutionTuple(['invalid-data', e]);
     }
-  }, options);
+  }
+
+  return CancelablePromise.withFn(async signal => {
+    const retries = 3;
+    for (let i = 0; i < retries; i++) {
+      const result = await perform(signal);
+      if (result[0] || i === retries - 1) {
+        return result;
+      }
+      // Sleep: 800ms, 1600ms
+      await new Promise(res => {
+        setTimeout(res, Math.pow(2, i + 3) * 100);
+      });
+    }
+  }, options) as CancelablePromise<GqlRequestResult<T>>;
 }
