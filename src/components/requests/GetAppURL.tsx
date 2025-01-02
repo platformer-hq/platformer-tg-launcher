@@ -8,19 +8,13 @@ import type { RequestComponentProps } from '@/components/requests/types.js';
  * Retrieves the application URL.
  */
 export function GetAppURL(
-  props: RequestComponentProps<string, GetAppURLOptions & {
+  props: RequestComponentProps<string, GetAppURLOptions, {
     appNotFound: JSXElement;
     noURL: JSXElement;
   }>,
 ) {
   return (
-    <Resource
-      {...props}
-      source={props}
-      fetcher={(source, options) => {
-        return getAppUrl({ ...source, ...options });
-      }}
-    >
+    <Resource {...props} fetcher={getAppUrl}>
       {data => (
         <Switch fallback={props.noURL}>
           <Match when={!data()[0]}>

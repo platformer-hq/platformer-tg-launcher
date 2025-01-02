@@ -10,14 +10,13 @@ import type { RequestComponentProps } from '@/components/requests/types.js';
  * Retrieves the auth token and passes it to the children.
  */
 export function GetAuthToken(
-  props: RequestComponentProps<{ token: string; expiresAt: Date }, AuthenticateOptions & {
+  props: RequestComponentProps<{ token: string; expiresAt: Date }, AuthenticateOptions, {
     appNotFound: JSXElement;
   }>,
 ) {
   return (
     <Resource
       {...props}
-      source={props}
       fetcher={(source, options) => {
         // Try to retrieve previously saved token.
         return getAuthToken(options)
@@ -27,7 +26,7 @@ export function GetAuthToken(
           .then(authToken => authToken
             ? [true, authToken] as [true, typeof authToken]
             // Authenticate using Platformer API.
-            : authenticate({ ...source, ...options }));
+            : authenticate(source, options));
       }}
       error={error => {
         const isAppNotFound = () => {
