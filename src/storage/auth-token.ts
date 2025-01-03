@@ -10,7 +10,7 @@ const STORAGE_KEY = 'platformer-auth-token';
  * Retrieves the authorization token.
  * @param options - additional options.
  */
-export function getAuthToken(options?: AsyncOptions): CancelablePromise<{
+export function getStoredAuthToken(options?: AsyncOptions): CancelablePromise<{
   token: string,
   expiresAt: Date
 } | undefined> {
