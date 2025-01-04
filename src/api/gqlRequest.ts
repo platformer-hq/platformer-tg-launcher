@@ -34,7 +34,7 @@ export type GqlRequestError =
   | [type: 'gql', errors: GqlError[]]
   | [type: 'http', status: number, statusText: string]
   | [type: 'fetch', error: unknown]
-  | [type: 'invalid-data', error: unknown];
+  | [type: 'invalid-data', error: Error | StructError];
 
 export type GqlRequestResult<T> = ExecutionTuple<T, GqlRequestError>;
 
@@ -78,12 +78,15 @@ export function gqlRequest<T, S>(
     let data: {
       data?: unknown;
       errors?: Maybe<GqlErrorShape[]>;
-    } | undefined;
+    } | undefined | void;
+    let err: Error | StructError | undefined;
     if ((response.headers.get('content-type') || '').includes('application/json')) {
       data = await response
         .json()
         .then(j => create(j, GqlResponse))
-        .catch(() => undefined);
+        .catch(e => {
+          err = e;
+        });
     }
 
     if (!data) {
@@ -91,7 +94,7 @@ export function gqlRequest<T, S>(
       return toFailedExecutionTuple(
         status < 200 || status >= 400
           ? ['http', status, response.statusText]
-          : ['invalid-data', new Error('Invalid response')],
+          : ['invalid-data', err!],
       );
     }
     if (data.errors) {
@@ -102,7 +105,7 @@ export function gqlRequest<T, S>(
     try {
       return [true, create(data.data, struct)];
     } catch (e) {
-      return toFailedExecutionTuple(['invalid-data', e]);
+      return toFailedExecutionTuple(['invalid-data', e as StructError]);
     }
   }
 
