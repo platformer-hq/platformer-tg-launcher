@@ -22,7 +22,7 @@ export function getAppUrl(
 ): CancelablePromise<GqlRequestResult<[appFound: boolean, url?: Maybe<string>]>> {
   return gqlRequest(
     args.apiBaseURL,
-    'query ($appID: Int!, $launchParams: String!) {'
+    'query GetAppURL ($appID: Int!, $launchParams: String!) {'
     + ' app(appID: $appID) {'
     + '  telegramURL(launchParams: $launchParams)'
     + ' }'

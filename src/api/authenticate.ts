@@ -21,7 +21,7 @@ export function authenticate(
 ): CancelablePromise<GqlRequestResult<{ token: string; expiresAt: Date }>> {
   return gqlRequest(
     args.apiBaseURL,
-    'mutation ($appID: Int, $initData: String!) {'
+    'mutation Authenticate($appID: Int, $initData: String!) {'
     + ' authenticateTelegram(appID: $appID, initData: $initData) {'
     + '  token'
     + '  expiresAt'
