@@ -24,7 +24,7 @@ export function getAppUrl(
     args.apiBaseURL,
     'query GetAppURL ($appID: Int!, $launchParams: String!) {'
     + ' app(appID: $appID) {'
-    + '  telegramURL(launchParams: $launchParams)'
+    + '  telegramURL(launchParams: $launchParams, isExternal: true)'
     + ' }'
     + '}',
     { appID: args.appID, launchParams: args.launchParams },
