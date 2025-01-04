@@ -4,7 +4,7 @@ import { StructError } from 'superstruct';
 import type { GqlRequestError } from '@/api/gqlRequest.js';
 import { AppError } from '@/components/AppError/AppError.js';
 
-export type AppLoadErrorError = GqlRequestError | ['iframe'];
+export type AppLoadErrorError = GqlRequestError | ['iframe', timeout?: boolean];
 
 /**
  * Used to handle all kinds of GQL request errors.
@@ -21,7 +21,7 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
   const whenGql = withError(e => e[0] === 'gql' ? e[1] : false);
   const whenHttp = withError(e => e[0] === 'http' ? [e[1], e[2]] as [number, string] : false);
   const whenInvalidData = withError(e => e[0] === 'invalid-data' ? e[1] : false);
-  const whenIframe = withError(e => e[0] === 'iframe');
+  const whenIframe = withError(e => e[0] === 'iframe' ? [e[1]] : false);
 
   return (
     <Switch>
@@ -82,7 +82,14 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
         }}
       </Match>
       <Match when={whenIframe()}>
-        <AppError title={oopsTitle} subtitle="Application failed to load"/>
+        {data => (
+          <AppError
+            title={oopsTitle}
+            subtitle={
+              `Application failed to load due to ${data()[0] ? 'timeout' : 'unknown reason'}`
+            }
+          />
+        )}
       </Match>
     </Switch>
   );

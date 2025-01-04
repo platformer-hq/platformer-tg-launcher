@@ -82,8 +82,8 @@ export function BootstrapApp(props: {
   );
   //#endregion
 
-  const onIframeError = () => {
-    setError(['iframe']);
+  const onIframeError = (timeout?: boolean) => {
+    setError(['iframe', timeout]);
   };
   const renderAppContainer = (url: string) => (
     <AppContainer
@@ -92,7 +92,9 @@ export function BootstrapApp(props: {
         setLoading(false);
       }}
       onError={onIframeError}
-      onTimeout={onIframeError}
+      onTimeout={() => {
+        onIframeError(true);
+      }}
       loadTimeout={props.loadTimeout}
     />
   );
