@@ -1,6 +1,6 @@
 import { onCleanup, onMount } from 'solid-js';
 import { postEvent } from '@telegram-apps/sdk-solid';
-import { any, create, object, string } from 'superstruct';
+import { any, create, string, type } from 'superstruct';
 
 import './AppContainer.scss';
 
@@ -27,7 +27,7 @@ export function AppContainer(props: {
 
     const onMessage = ({ data, source }: MessageEvent) => {
       try {
-        const payload = create(JSON.parse(data), object({
+        payload = create(JSON.parse(data), type({
           eventType: string(),
           eventData: any(),
         }));

@@ -4,7 +4,15 @@ import {
   retrieveLaunchParams,
   serializeLaunchParams,
 } from '@telegram-apps/sdk-solid';
-import { coerce, create, defaulted, instance, object, string, type StructError } from 'superstruct';
+import {
+  coerce,
+  create,
+  defaulted,
+  instance,
+  string,
+  type StructError,
+  type,
+} from 'superstruct';
 
 import { BootstrapApp } from '@/components/BootstrapApp.js';
 import { RootErrorBoundary } from '@/components/RootErrorBoundary.js';
@@ -31,7 +39,7 @@ function Inner() {
           window.location.search.replace(/&amp;/g, '&'),
         ),
         coerce(
-          object({
+          type({
             app_id: PositiveIntFromStr,
             api_base_url: defaulted(string(), 'https://platformer.tg/api/gql'),
             fallback_url: maybe(string()),

@@ -1,4 +1,4 @@
-import { any, array, create, object, string, type Struct } from 'superstruct';
+import { any, array, create, string, type Struct, StructError, type } from 'superstruct';
 import { type AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
 
 import { GqlError } from '@/api/GqlError.js';
@@ -14,12 +14,12 @@ interface GqlErrorShape {
   };
 }
 
-const GqlResponse = object({
+const GqlResponse = type({
   data: any(),
-  errors: maybe(array(object({
+  errors: maybe(array(type({
     message: maybe(string()),
-    extensions: object({
-      errorData: object({
+    extensions: type({
+      errorData: type({
         code: string(),
       }),
     }),

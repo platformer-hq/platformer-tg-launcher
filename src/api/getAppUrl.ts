@@ -1,5 +1,5 @@
 import type { AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
-import { object, string } from 'superstruct';
+import { string, type } from 'superstruct';
 
 import { gqlRequest, type GqlRequestResult } from '@/api/gqlRequest.js';
 import { maybe } from '@/validation/maybe.js';
@@ -28,8 +28,8 @@ export function getAppUrl(
     + ' }'
     + '}',
     { appID: args.appID, launchParams: args.launchParams },
-    object({
-      app: maybe(object({
+    type({
+      app: maybe(type({
         telegramURL: maybe(string()),
       })),
     }),

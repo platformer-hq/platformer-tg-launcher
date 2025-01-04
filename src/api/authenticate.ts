@@ -1,5 +1,5 @@
 import type { AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
-import { object } from 'superstruct';
+import { type } from 'superstruct';
 
 import { gqlRequest, type GqlRequestResult } from '@/api/gqlRequest.js';
 import { AuthToken } from '@/validation/AuthToken.js';
@@ -28,7 +28,7 @@ export function authenticate(
     + ' }'
     + '}',
     { appID: args.appID, initData: args.initData },
-    object({ authenticateTelegram: AuthToken }),
+    type({ authenticateTelegram: AuthToken }),
     options,
   ).then(v => v[0]
     ? [true, v[1].authenticateTelegram]
