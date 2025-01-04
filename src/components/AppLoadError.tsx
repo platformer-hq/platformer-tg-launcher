@@ -4,13 +4,16 @@ import { StructError } from 'superstruct';
 import type { GqlRequestError } from '@/api/gqlRequest.js';
 import { AppError } from '@/components/AppError/AppError.js';
 
+export type AppLoadErrorError = GqlRequestError | ['iframe'];
+
 /**
  * Used to handle all kinds of GQL request errors.
  */
-export function RequestError(props: { error: GqlRequestError }) {
+export function AppLoadError(props: { error: AppLoadErrorError }) {
   const networkErrTitle = 'Network error';
+  const oopsTitle = 'Oops!';
 
-  function withError<T>(fn: (err: GqlRequestError) => T) {
+  function withError<T>(fn: (err: AppLoadErrorError) => T) {
     return () => fn(props.error);
   }
 
@@ -18,6 +21,7 @@ export function RequestError(props: { error: GqlRequestError }) {
   const whenGql = withError(e => e[0] === 'gql' ? e[1] : false);
   const whenHttp = withError(e => e[0] === 'http' ? [e[1], e[2]] as [number, string] : false);
   const whenInvalidData = withError(e => e[0] === 'invalid-data' ? e[1] : false);
+  const whenIframe = withError(e => e[0] === 'iframe');
 
   return (
     <Switch>
@@ -30,7 +34,7 @@ export function RequestError(props: { error: GqlRequestError }) {
       <Match when={whenGql()}>
         {errors => (
           <AppError
-            title="Oops!"
+            title={oopsTitle}
             subtitle={
               <>
                 Server returned errors:{' '}
@@ -74,8 +78,11 @@ export function RequestError(props: { error: GqlRequestError }) {
               </>
             );
           };
-          return <AppError title="Oops!" subtitle={message()}/>;
+          return <AppError title={oopsTitle} subtitle={message()}/>;
         }}
+      </Match>
+      <Match when={whenIframe()}>
+        <AppError title={oopsTitle} subtitle="Application failed to load"/>
       </Match>
     </Switch>
   );
