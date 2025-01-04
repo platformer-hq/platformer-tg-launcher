@@ -24,7 +24,6 @@ export function createExecutionResource<Data, Err = unknown, Source = object>(
   const controller = new AbortController();
   const result = createResource(
     () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const s = typeof source === 'function' ? (source as any)() : source;
       return [null, undefined, false].includes(s) ? false : {
         options: { abortSignal: options.abortSignal || controller.signal },
