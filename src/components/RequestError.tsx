@@ -1,4 +1,5 @@
-import { Match, Switch } from 'solid-js';
+import { For, Match, Switch } from 'solid-js';
+import { StructError } from 'superstruct';
 
 import type { GqlRequestError } from '@/api/gqlRequest.js';
 import { AppError } from '@/components/AppError/AppError.js';
@@ -30,14 +31,19 @@ export function RequestError(props: { error: GqlRequestError }) {
         {errors => (
           <AppError
             title="Oops!"
-            subtitle={`Server returned errors: ${errors().map((error, idx) => {
-              return (
-                <>
-                  {idx ? ', ' : ''}{error.message}&nbsp;
-                  <b>(${error.code})</b>
-                </>
-              );
-            })}`}
+            subtitle={
+              <>
+                Server returned errors:{' '}
+                <For each={errors()}>
+                  {(error, idx) => (
+                    <>
+                      {idx() ? ', ' : ''}{error.message}&nbsp;
+                      <b>({error.code})</b>
+                    </>
+                  )}
+                </For>
+              </>
+            }
           />
         )}
       </Match>
@@ -50,10 +56,26 @@ export function RequestError(props: { error: GqlRequestError }) {
         )}
       </Match>
       <Match when={whenInvalidData()}>
-        <AppError
-          title="Oops!"
-          subtitle="Server returned unexpected response"
-        />
+        {err => {
+          const message = () => {
+            const e = err();
+            return (
+              <>
+                Server returned unexpected response:{' '}
+                {e instanceof StructError
+                  ? e.failures().map((f, idx) => (
+                    <>
+                      {idx ? ', ' : ''}
+                      <b>{f.key}</b>
+                      &nbsp;({f.message})
+                    </>
+                  ))
+                  : e.message}
+              </>
+            );
+          };
+          return <AppError title="Oops!" subtitle={message()}/>;
+        }}
       </Match>
     </Switch>
   );
