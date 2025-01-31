@@ -76,8 +76,12 @@ export function gqlRequest<S extends BaseSchema<unknown, unknown, BaseIssue<unkn
   ): Promise<GqlRequestResult<InferOutput<S>>> {
     let response: Response;
     try {
+      const controller = new AbortController();
+      context.onAborted(() => {
+        !context.isResolved() && controller.abort(context.abortReason());
+      });
       response = await fetch(apiBaseURL, {
-        signal: context.abortSignal,
+        signal: controller.signal,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
