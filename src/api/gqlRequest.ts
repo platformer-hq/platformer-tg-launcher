@@ -1,9 +1,20 @@
-import { any, array, create, string, type Struct, StructError, type } from 'superstruct';
-import { type AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
+import type { AsyncOptions } from '@telegram-apps/sdk-solid';
+import { AbortablePromise, type PromiseExecutorContext } from 'better-promises';
+import {
+  array,
+  type BaseIssue,
+  type BaseSchema,
+  type InferOutput,
+  looseObject,
+  parse,
+  string,
+  unknown,
+  ValiError,
+} from 'valibot';
 
 import { GqlError } from '@/api/GqlError.js';
-import { maybe } from '@/validation/maybe.js';
 import type { ExecutionFailedTuple, ExecutionTuple } from '@/types/execution.js';
+import { maybe } from '@/validation/maybe.js';
 
 interface GqlErrorShape {
   message?: Maybe<string>;
@@ -14,12 +25,12 @@ interface GqlErrorShape {
   };
 }
 
-const GqlResponse = type({
-  data: any(),
-  errors: maybe(array(type({
+const GqlResponse = looseObject({
+  data: unknown(),
+  errors: maybe(array(looseObject({
     message: maybe(string()),
-    extensions: type({
-      errorData: type({
+    extensions: looseObject({
+      errorData: looseObject({
         code: string(),
       }),
     }),
@@ -31,10 +42,11 @@ export interface GqlRequestOptions extends AsyncOptions {
 }
 
 export type GqlRequestError =
-  | [type: 'gql', errors: GqlError[]]
+  | [type: 'gql', errors: InstanceType<typeof GqlError>[]]
   | [type: 'http', status: number, statusText: string]
   | [type: 'fetch', error: unknown]
-  | [type: 'invalid-data', error: Error | StructError];
+  | [type: 'invalid-data', error: Error | ValiError<any>]
+  | [type: 'execution', error: Error];
 
 export type GqlRequestResult<T> = ExecutionTuple<T, GqlRequestError>;
 
@@ -49,21 +61,23 @@ function toFailedExecutionTuple<T>(error: T): ExecutionFailedTuple<T> {
  * @param apiBaseURL - URL to send request to.
  * @param query - GraphQL query.
  * @param variables - query variables.
- * @param struct - structure used to validate the response.
+ * @param schema - structure used to validate the response.
  * @param options - additional options.
  */
-export function gqlRequest<T, S>(
+export function gqlRequest<S extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
   apiBaseURL: string,
   query: string,
   variables: Record<string, unknown>,
-  struct: Struct<T, S>,
+  schema: S,
   options?: GqlRequestOptions,
-): CancelablePromise<GqlRequestResult<T>> {
-  async function perform(signal: AbortSignal): Promise<GqlRequestResult<T>> {
+): AbortablePromise<GqlRequestResult<InferOutput<S>>> {
+  async function perform(
+    context: PromiseExecutorContext<GqlRequestResult<InferOutput<S>>>,
+  ): Promise<GqlRequestResult<InferOutput<S>>> {
     let response: Response;
     try {
       response = await fetch(apiBaseURL, {
-        signal,
+        signal: context.abortSignal,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,51 +89,48 @@ export function gqlRequest<T, S>(
       return toFailedExecutionTuple(['fetch', e]);
     }
 
-    let data: {
-      data?: unknown;
-      errors?: Maybe<GqlErrorShape[]>;
-    } | undefined | void;
-    let err: Error | StructError | undefined;
+    let data: { data?: unknown; errors?: Maybe<GqlErrorShape[]> } | undefined | void;
+    let err: Error | undefined;
     if ((response.headers.get('content-type') || '').includes('application/json')) {
-      data = await response
-        .json()
-        .then(j => create(j, GqlResponse))
-        .catch(e => {
-          err = e;
-        });
+      data = await response.json().then(j => parse(GqlResponse, j)).catch(e => {
+        err = e;
+      });
     }
 
     if (!data) {
-      const { status } = response;
       return toFailedExecutionTuple(
-        status < 200 || status >= 400
-          ? ['http', status, response.statusText]
+        !response.ok
+          ? ['http', response.status, response.statusText]
           : ['invalid-data', err!],
       );
     }
+
     if (data.errors) {
       return toFailedExecutionTuple(['gql', data.errors.map(e => {
         return new GqlError(e.extensions.errorData.code, e.message || undefined);
       })]);
     }
     try {
-      return [true, create(data.data, struct)];
+      return [true, parse(schema, data.data)];
     } catch (e) {
-      return toFailedExecutionTuple(['invalid-data', e as StructError]);
+      return toFailedExecutionTuple(['invalid-data', e as ValiError<any>]);
     }
   }
 
-  return CancelablePromise.withFn(async signal => {
-    const retries = 3;
-    for (let i = 0; i < retries; i++) {
-      const result = await perform(signal);
-      if (result[0] || i === retries - 1) {
-        return result;
+  return new AbortablePromise<GqlRequestResult<InferOutput<S>>>(
+    async (res, _, context) => {
+      const retries = 3;
+      for (let i = 0; i < retries; i++) {
+        const result = await perform(context);
+        if (result[0] || i === retries - 1) {
+          return res(result);
+        }
+        // Sleep: 800ms, 1600ms
+        await new Promise(res => {
+          setTimeout(res, Math.pow(2, i + 3) * 100);
+        });
       }
-      // Sleep: 800ms, 1600ms
-      await new Promise(res => {
-        setTimeout(res, Math.pow(2, i + 3) * 100);
-      });
-    }
-  }, options) as CancelablePromise<GqlRequestResult<T>>;
+    }, options,
+  )
+    .catch(e => toFailedExecutionTuple(['execution', e]));
 }

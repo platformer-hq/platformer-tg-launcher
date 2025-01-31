@@ -1,7 +1,6 @@
-export class TimeoutError extends Error {
-  constructor(readonly timeout: number) {
-    super(`Timed out: ${timeout}ms`);
-    this.name = 'TimeoutError';
-    Object.setPrototypeOf(this, TimeoutError.prototype);
-  }
-}
+import { errorClass } from 'error-kid';
+
+export const [TimeoutError] = errorClass<[timeout: number]>(
+  'TimeoutError',
+  timeout => [`Timed out: ${timeout}ms`]
+)

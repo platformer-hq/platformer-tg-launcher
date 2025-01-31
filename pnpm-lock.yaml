@@ -9,17 +9,23 @@ importers:
   .:
     dependencies:
       '@telegram-apps/sdk-solid':
-        specifier: ^2.0.21
-        version: 2.0.21(solid-js@1.9.3)
+        specifier: ^3.0.5
+        version: 3.0.5(solid-js@1.9.3)(typescript@5.7.3)
+      better-promises:
+        specifier: ^0.4.0
+        version: 0.4.0
+      error-kid:
+        specifier: ^0.0.4
+        version: 0.0.4
       eruda:
         specifier: ^3.0.1
         version: 3.0.1
       solid-js:
         specifier: ^1.9.3
         version: 1.9.3
-      superstruct:
-        specifier: ^2.0.2
-        version: 2.0.2
+      valibot:
+        specifier: 1.0.0-beta.14
+        version: 1.0.0-beta.14(typescript@5.7.3)
     devDependencies:
       '@eslint/js':
         specifier: ^9.2.0
@@ -29,10 +35,10 @@ importers:
         version: 20.12.5
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.8.0
-        version: 7.8.0(@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.4.4))(eslint@8.57.0)(typescript@5.4.4)
+        version: 7.8.0(@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.7.3))(eslint@8.57.0)(typescript@5.7.3)
       '@typescript-eslint/parser':
         specifier: ^7.8.0
-        version: 7.8.0(eslint@8.57.0)(typescript@5.4.4)
+        version: 7.8.0(eslint@8.57.0)(typescript@5.7.3)
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -41,7 +47,7 @@ importers:
         version: 8.57.0
       eslint-plugin-solid:
         specifier: ^0.14.0
-        version: 0.14.0(eslint@8.57.0)(typescript@5.4.4)
+        version: 0.14.0(eslint@8.57.0)(typescript@5.7.3)
       gh-pages:
         specifier: ^6.1.1
         version: 6.1.1
@@ -61,17 +67,17 @@ importers:
         specifier: ^0.33.5
         version: 0.33.5
       solid-devtools:
-        specifier: ^0.30.1
-        version: 0.30.1(solid-js@1.9.3)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0))
+        specifier: ^0.33.0
+        version: 0.33.0(solid-js@1.9.3)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0))
       svgo:
         specifier: ^3.3.2
         version: 3.3.2
       typescript:
-        specifier: ^5.4.4
-        version: 5.4.4
+        specifier: ^5.7.3
+        version: 5.7.3
       typescript-eslint:
         specifier: ^7.8.0
-        version: 7.8.0(eslint@8.57.0)(typescript@5.4.4)
+        version: 7.8.0(eslint@8.57.0)(typescript@5.7.3)
       vite:
         specifier: ^6.0.5
         version: 6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0)
@@ -83,7 +89,7 @@ importers:
         version: 2.11.0(solid-js@1.9.3)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0))
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.4.4)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0))
+        version: 5.1.4(typescript@5.7.3)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0))
 
 packages:
 
@@ -520,8 +526,8 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@nothing-but/utils@0.12.1':
-    resolution: {integrity: sha512-1qZU1Q5El0IjE7JT/ucvJNzdr2hL3W8Rm27xNf1p6gb3Nw8pGnZmxp6/GEW9h+I1k1cICxXNq25hBwknTQ7yhg==}
+  '@nothing-but/utils@0.17.0':
+    resolution: {integrity: sha512-TuCHcHLOqDL0SnaAxACfuRHBNRgNJcNn9X0GiH5H3YSDBVquCr3qEIG3FOQAuMyZCbu9w8nk2CHhOsn7IvhIwQ==}
 
   '@octokit/auth-token@4.0.0':
     resolution: {integrity: sha512-tY/msAuJo6ARbK6SPIxZrPBms3xPbfwBrulZe0Wtr/DIY9lje2HeV1uoebShn6mx7SjCHif6EjMvoREj+gZ+SA==}
@@ -685,28 +691,23 @@ packages:
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
 
-  '@solid-devtools/debugger@0.23.4':
-    resolution: {integrity: sha512-EfTB1Eo313wztQYGJ4Ec/wE70Ay2d603VCXfT3RlyqO5QfLrQGRHX5NXC07hJpQTJJJ3tbNgzO7+ZKo76MM5uA==}
+  '@solid-devtools/debugger@0.26.0':
+    resolution: {integrity: sha512-36QxZ+s/lY60E+Pb9q0eTsdqgaog4c823WIj5dC2LFdGrGXbVGBQEj6k7CgvMnEETdwndrd0Fm72fQyYPlZrVA==}
     peerDependencies:
-      solid-js: ^1.8.0
+      solid-js: ^1.9.0
 
-  '@solid-devtools/shared@0.13.2':
-    resolution: {integrity: sha512-Y4uaC4EfTVwBR537MZwfaY/eiWAh+hW4mbtnwNuUw/LFmitHSkQhNQTUlLQv/S0chtwrYWQBxvXos1dC7e8R9g==}
+  '@solid-devtools/shared@0.19.0':
+    resolution: {integrity: sha512-OGo6l84f9X5YEAqSEM4Xl94+xKXSqmACMzKWsAqO0BStLBMVL0vIVu286AQk5XkNxn11/EB9wrdkZc9GUzKlxA==}
     peerDependencies:
-      solid-js: ^1.8.0
+      solid-js: ^1.9.0
 
-  '@solid-primitives/bounds@0.0.118':
-    resolution: {integrity: sha512-Qj42w8LlnhJ3r/t+t0c0vrdwIvvQMPgjEFGmLiwREaA85ojLbgL9lSBq2tKvljeLCvRVkgj10KEUf+vc99VCIg==}
-    peerDependencies:
-      solid-js: ^1.6.12
-
-  '@solid-primitives/cursor@0.0.112':
-    resolution: {integrity: sha512-TAtU7qD7ipSLSXHnq8FhhosAPVX+dnOCb/ITcGcLlj8e/C9YKcxDhgBHJ3R/d1xDRb5/vO/szJtEz6fnQD311Q==}
+  '@solid-primitives/bounds@0.0.122':
+    resolution: {integrity: sha512-kUq/IprOdFr/rg2upon5lQGOoTnDAmxQS4ASKK2l+VwoKSctdPwgu/4qJxEITZikL+nB0myYZzBZWptySV0cRg==}
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@solid-primitives/event-bus@1.0.11':
-    resolution: {integrity: sha512-bSwVA4aI2aNHomSbEroUnisMSyDDXJbrw4U8kFEvrcYdlLrJX5i6QeCFx+vj/zdQQw62KAllrEIyWP8KMpPVnQ==}
+  '@solid-primitives/cursor@0.0.115':
+    resolution: {integrity: sha512-8nEmUN/sacXPChwuJOAi6Yi6VnxthW/Jk8VGvvcF38AenjUvOA6FHI6AkJILuFXjQw1PGxia1YbH/Mn77dPiOA==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -715,13 +716,18 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
+  '@solid-primitives/event-listener@2.4.0':
+    resolution: {integrity: sha512-TSfR1PNTfojFEYGSxSMCnUhXsaYWBo4p+cm73QmWODa9YnaQAk6PB7VjzG2bOT2D817VlvuOqTj0Qdq+MZrdGg==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
   '@solid-primitives/keyboard@1.2.8':
     resolution: {integrity: sha512-pJtcbkjozS6L1xvTht9rPpyPpX55nAkfBzbFWdf3y0Suwh6qClTibvvObzKOf7uzQ+8aZRDH4LsoGmbTKXtJjQ==}
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@solid-primitives/media@2.2.8':
-    resolution: {integrity: sha512-jcwTxjEn07W5KEeQIc0nR+07xRjvsWTf115PIwScCWgo6aPkfW3x74aq7lH5F3mLfb/9SeTn0ixz8fBVel3cHg==}
+  '@solid-primitives/media@2.3.0':
+    resolution: {integrity: sha512-7+C3wfbWnGE/WPoNsqcp/EeOP2aNNB92RCpsWhBth8E5lZo/J+rK6jMb7umVsK0zguT8HBpeXp1pFyFbcsHStA==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -735,8 +741,8 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@solid-primitives/resize-observer@2.0.25':
-    resolution: {integrity: sha512-jVDXkt2MiriYRaz4DYs62185d+6jQ+1DCsR+v7f6XMsIJJuf963qdBRFjtZtKXBaxdPNMyuPeDgf5XQe3EoDJg==}
+  '@solid-primitives/resize-observer@2.1.0':
+    resolution: {integrity: sha512-tO9MDAc2pNjpcRd5B8LWbiR1qzIgvGZ5BtTuO98N7CLwd+fnuyGwtlQtJpz5hcLcTnoawpQYLpiRGNgaYW+YzQ==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -745,13 +751,13 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@solid-primitives/scheduled@1.4.3':
-    resolution: {integrity: sha512-HfWN5w7b7FEc6VPLBKnnE302h90jsLMuR28Fcf7neRGGf8jBj6wm6/UFQ00VlKexHFMR6KQ2u4VBh5a1ZcqM8g==}
+  '@solid-primitives/rootless@1.5.0':
+    resolution: {integrity: sha512-YJ+EveQeDv9DLqfDKfsPAAGy2x3vBruoD23yn+nD2dT84QjoBxWT1T0qA0TMFjek6/xuN3flqnHtQ4r++4zdjg==}
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@solid-primitives/static-store@0.0.5':
-    resolution: {integrity: sha512-ssQ+s/wrlFAEE4Zw8GV499yBfvWx7SMm+ZVc11wvao4T5xg9VfXCL9Oa+x4h+vPMvSV/Knv5LrsLiUa+wlJUXQ==}
+  '@solid-primitives/scheduled@1.5.0':
+    resolution: {integrity: sha512-RVw24IRNh1FQ4DCMb3OahB70tXIwc5vH8nhR4nNPsXwUPQeuOkLsDI5BlxaPk0vyZgqw9lDpufgI3HnPwplgDw==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -760,8 +766,13 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@solid-primitives/styles@0.0.111':
-    resolution: {integrity: sha512-1mBxOGAPXmfD5oYCvqjKBDN7SuNjz2qz7RdH7KtsuNLQh6lpuSKadtHnLvru0Y8Vz1InqTJisBIy/6P5kyDmPw==}
+  '@solid-primitives/static-store@0.1.0':
+    resolution: {integrity: sha512-6Coau0Kv/dF83UQpbBzc+gnJafOQAPe2jCbB4jmTK5UocsR5cWmFBVRm3kin+nZFVaO4WkuELw0cKANWgTVh8Q==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
+  '@solid-primitives/styles@0.0.114':
+    resolution: {integrity: sha512-SFXr16mgr6LvZAIj6L7i59HHg+prAmIF8VP/U3C6jSHz68Eh1G71vaWr9vlJVpy/j6bh1N8QUzu5CgtvIC92OQ==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -770,19 +781,27 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@telegram-apps/bridge@1.9.1':
-    resolution: {integrity: sha512-I0XzHkNV7QAc/0Nw/Dx33XGYXC5dRwMcysntLE4ftDDjAaGeXd03H2wc6nHDmX/z8av3s4FWO3EBovFAu72BFA==}
+  '@solid-primitives/utils@6.3.0':
+    resolution: {integrity: sha512-e7hTlJ1Ywh2+g/Qug+n4L1mpfxsikoIS4/sHE2EK9WatQt8UJqop/vE6bsLnXlU1xuhb/jo94Ah5Y27rd4wP7A==}
+    peerDependencies:
+      solid-js: ^1.6.12
 
-  '@telegram-apps/navigation@1.0.12':
-    resolution: {integrity: sha512-lkVO+YKET+7lIjFc5w6dPhqi4LRJz9l/xuuLEghslw8kawYRX/SubxKXq33f2A6FLqnIaxc0iwoiobxGTemM4g==}
+  '@telegram-apps/bridge@1.9.2':
+    resolution: {integrity: sha512-SJLcNWLXhbbZr9MiqFH/g2ceuitSJKMxUIZysK4zUNyTUNuonrQG80Q/yrO+XiNbKUj8WdDNM86NBARhuyyinQ==}
 
-  '@telegram-apps/sdk-solid@2.0.21':
-    resolution: {integrity: sha512-jKYX+RUx+84PmA4C/USejgLv1bVcRMyTIEGMkeS6IMgBD3JQbVPkFPj274vKOkvFsdawm+JhbAo16Kwjo3zAYg==}
+  '@telegram-apps/bridge@2.3.0':
+    resolution: {integrity: sha512-uWt+Z48OlQ20d0KxT4TaZB4mStv25UmXgVg1eQe4LXHeHhcAItmREvfrfm8DKLzGJTacG9TAcDurCDskmQ4flA==}
+
+  '@telegram-apps/navigation@1.0.13':
+    resolution: {integrity: sha512-TsUueB5LQp77GQHoMa93nq26Uw7GJjrFCPbyseMVU7aBBxAc+8CV2IYytRwcVp5sv/q7ThK5X4JaKn2V1yBHDQ==}
+
+  '@telegram-apps/sdk-solid@3.0.5':
+    resolution: {integrity: sha512-DSALs+rmWr8TGAcmNnRhGJsRjd8hdfsSVkIjq37z/xfQP1MCgx7NHhZ7Xt288Dt4jGF06b9TUDgrFMJwMZNoFw==}
     peerDependencies:
       solid-js: ^1.0.0
 
-  '@telegram-apps/sdk@2.11.1':
-    resolution: {integrity: sha512-AcNDs+qmdjmh4HrA3c31TAO2V3w8JX2Y4DC9VmMjuvZtQwSUh/F+jsTP4Ybhp9hNhMnvb0QS0JIj7zYlcXKfqQ==}
+  '@telegram-apps/sdk@3.1.3':
+    resolution: {integrity: sha512-h5uhdWSH5vfP6FA9r5otnt41pqAutc42XQQ2dqCihuKrJhYXE2i13a63a3kkcdz8/vMAHN9UwTzkYqBEQ9bYIg==}
 
   '@telegram-apps/signals@1.1.1':
     resolution: {integrity: sha512-vz37r8lemGpPzDiBRfqpXYBynzmy3SFnY6zfHsTZABTYYt0b0WQZyU5mFDqqqugGhka78Gy11xmr9csgy4YgGA==}
@@ -790,11 +809,20 @@ packages:
   '@telegram-apps/toolkit@1.1.1':
     resolution: {integrity: sha512-+vhKx6ngfvjyTE6Xagl3z1TPVbfx5s7xAkcYzCdHYUo6T60jLIqLgyZMcI1UPoIAMuMu1pHoO+p8QNCj/+tFmw==}
 
+  '@telegram-apps/toolkit@2.0.0':
+    resolution: {integrity: sha512-1GKTLBNme1Phu/gFvgS9NWPq+LhPfzSIfnwhcF9I/6tCdufrLRcVaSMRiK9R4VDYD6iZUyj+a2l250qWAxxjQQ==}
+
   '@telegram-apps/transformers@1.2.2':
     resolution: {integrity: sha512-vvMwXckd1D7Ozc0h66PSUwF5QLrRV9HlGJFFeBuUex8QEk5mSPtsJkLiqB8aBbwuFDa91+TUSM/CxqPZO/e9YQ==}
 
+  '@telegram-apps/transformers@2.1.0':
+    resolution: {integrity: sha512-O66Ek/Imt+T22KAgDuZqKxbuJzqEbKr6ojWmpYFwCeX1JauS/+76tC5IGOPEaFAMukwGKgcht+QbMcjYUOisow==}
+
   '@telegram-apps/types@1.2.1':
     resolution: {integrity: sha512-so4HLh7clur0YyMthi9KVIgWoGpZdXlFOuQjk3+Q5NAvJZ11nAheBSwPlGw/Ko92+zwvrSBE/lQyN2+p17RP+w==}
+
+  '@telegram-apps/types@2.0.0':
+    resolution: {integrity: sha512-yF499FJK82a2IDNDAQdrmVH3sgFZl/QFNdVZKgWpgtunIVJ1fres5wi9+4aUBRVIdQwZOZZqB/AOvYYuYXsq3Q==}
 
   '@tokenizer/token@0.3.0':
     resolution: {integrity: sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==}
@@ -1015,6 +1043,9 @@ packages:
 
   before-after-hook@2.2.3:
     resolution: {integrity: sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==}
+
+  better-promises@0.4.0:
+    resolution: {integrity: sha512-AcKkTUSd4o1vMf41eBbHW1NkY7vrXeNI6etitGdQE54WFXsF2wkfonrKA06Za7lViRNyT/cMvj5z+DScqhYW8A==}
 
   bin-build@3.0.0:
     resolution: {integrity: sha512-jcUOof71/TNAI2uM5uoUaDq2ePcVBQ3R/qhxAz1rX7UfvduAL/RXD3jXzvn8cVcDJdGVkiR1shal3OH0ImpuhA==}
@@ -1384,6 +1415,9 @@ packages:
 
   error-ex@1.3.2:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
+
+  error-kid@0.0.4:
+    resolution: {integrity: sha512-x+yQhY56SorLMnX6kOf+z3JCv2QBurcWEDcIjgxYtVr4fGeCfAtOdZOCyWttkHHDFPtL2PqnaRUmphbmALJd9w==}
 
   eruda@3.0.1:
     resolution: {integrity: sha512-6q1Xdwga4JTr1mKSW4mzuWSSbmXgqpm/8Wa1QGFGfCWRjC0bCQjbS4u06M1te1moucIS3hBLlbSTPWYH2W0qbQ==}
@@ -2173,6 +2207,9 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
+  mitt@3.0.1:
+    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
+
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
 
@@ -2734,15 +2771,12 @@ packages:
     resolution: {integrity: sha512-ZA6oR3T/pEyuqwMgAKT0/hAv8oAXckzbkmR0UkUosQ+Mc4RxGoJkRmwHgHufaenlyAgE1Mxgpdcrf75y6XcnDg==}
     engines: {node: '>=14.16'}
 
-  solid-devtools@0.30.1:
-    resolution: {integrity: sha512-axpXL4JV1dnGhuei+nSGS8ewGeNkmIgFDsAlO90YyYY5t8wU1R0aYAQtL+I+5KICLKPBvfkzdcFa2br7AV4lAw==}
+  solid-devtools@0.33.0:
+    resolution: {integrity: sha512-xRB4Jhgns3dBuM/s0j70BpXKy77sNjISud9xXBv60qC4cnJ/TcuVHI1t+05luj1BEKJVQSokqIaVoZWcjqA9yw==}
     peerDependencies:
-      solid-js: ^1.8.0
-      solid-start: ^0.3.0
-      vite: ^2.2.3 || ^3.0.0 || ^4.0.0 || ^5.0.0
+      solid-js: ^1.9.0
+      vite: ^2.2.3 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
     peerDependenciesMeta:
-      solid-start:
-        optional: true
       vite:
         optional: true
 
@@ -2870,10 +2904,6 @@ packages:
   super-regex@1.0.0:
     resolution: {integrity: sha512-CY8u7DtbvucKuquCmOFEKhr9Besln7n9uN8eFbwcoGYWXOMW07u2o8njWaiXt11ylS3qoGF55pILjRmPlbodyg==}
     engines: {node: '>=18'}
-
-  superstruct@2.0.2:
-    resolution: {integrity: sha512-uV+TFRZdXsqXTL2pRvujROjdZQ4RAlBUS5BTh9IGm+jTqQntYThciG/qu57Gs69yjnVUSqdxF9YLmSnpupBW9A==}
-    engines: {node: '>=14.0.0'}
 
   supports-color@2.0.0:
     resolution: {integrity: sha512-KKNVtd6pCYgPIKU4cp2733HWYCpplQhddZLBUryaAHou723x+FRzQ5Df824Fj+IyyuiQTRoub4SnIFfIcrp70g==}
@@ -3006,8 +3036,8 @@ packages:
       typescript:
         optional: true
 
-  typescript@5.4.4:
-    resolution: {integrity: sha512-dGE2Vv8cpVvw28v8HCPqyb08EzbBURxDpuhJvTrusShUfGnhHBafDsLdS1EhhxyL6BJQE+2cT3dDPAv+MQ6oLw==}
+  typescript@5.7.3:
+    resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -3060,6 +3090,14 @@ packages:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
     hasBin: true
+
+  valibot@1.0.0-beta.14:
+    resolution: {integrity: sha512-tLyV2rE5QL6U29MFy3xt4AqMrn+/HErcp2ZThASnQvPMwfSozjV1uBGKIGiegtZIGjinJqn0SlBdannf18wENA==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   validate-html-nesting@1.2.2:
     resolution: {integrity: sha512-hGdgQozCsQJMyfK5urgFcWEqsSSrK63Awe0t/IMR0bZ0QMtnuaiHzThW81guu3qx9abLi99NEuiaN6P9gVYsNg==}
@@ -3545,7 +3583,7 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
 
-  '@nothing-but/utils@0.12.1': {}
+  '@nothing-but/utils@0.17.0': {}
 
   '@octokit/auth-token@4.0.0': {}
 
@@ -3675,49 +3713,43 @@ snapshots:
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
-  '@solid-devtools/debugger@0.23.4(solid-js@1.9.3)':
+  '@solid-devtools/debugger@0.26.0(solid-js@1.9.3)':
     dependencies:
-      '@nothing-but/utils': 0.12.1
-      '@solid-devtools/shared': 0.13.2(solid-js@1.9.3)
-      '@solid-primitives/bounds': 0.0.118(solid-js@1.9.3)
-      '@solid-primitives/cursor': 0.0.112(solid-js@1.9.3)
-      '@solid-primitives/event-bus': 1.0.11(solid-js@1.9.3)
+      '@nothing-but/utils': 0.17.0
+      '@solid-devtools/shared': 0.19.0(solid-js@1.9.3)
+      '@solid-primitives/bounds': 0.0.122(solid-js@1.9.3)
+      '@solid-primitives/cursor': 0.0.115(solid-js@1.9.3)
       '@solid-primitives/event-listener': 2.3.3(solid-js@1.9.3)
       '@solid-primitives/keyboard': 1.2.8(solid-js@1.9.3)
       '@solid-primitives/platform': 0.1.2(solid-js@1.9.3)
       '@solid-primitives/rootless': 1.4.5(solid-js@1.9.3)
-      '@solid-primitives/scheduled': 1.4.3(solid-js@1.9.3)
-      '@solid-primitives/static-store': 0.0.5(solid-js@1.9.3)
+      '@solid-primitives/scheduled': 1.5.0(solid-js@1.9.3)
+      '@solid-primitives/static-store': 0.0.8(solid-js@1.9.3)
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
-  '@solid-devtools/shared@0.13.2(solid-js@1.9.3)':
+  '@solid-devtools/shared@0.19.0(solid-js@1.9.3)':
     dependencies:
-      '@solid-primitives/event-bus': 1.0.11(solid-js@1.9.3)
+      '@nothing-but/utils': 0.17.0
       '@solid-primitives/event-listener': 2.3.3(solid-js@1.9.3)
-      '@solid-primitives/media': 2.2.8(solid-js@1.9.3)
+      '@solid-primitives/media': 2.3.0(solid-js@1.9.3)
       '@solid-primitives/refs': 1.0.8(solid-js@1.9.3)
       '@solid-primitives/rootless': 1.4.5(solid-js@1.9.3)
-      '@solid-primitives/scheduled': 1.4.3(solid-js@1.9.3)
-      '@solid-primitives/static-store': 0.0.5(solid-js@1.9.3)
-      '@solid-primitives/styles': 0.0.111(solid-js@1.9.3)
+      '@solid-primitives/scheduled': 1.5.0(solid-js@1.9.3)
+      '@solid-primitives/static-store': 0.0.8(solid-js@1.9.3)
+      '@solid-primitives/styles': 0.0.114(solid-js@1.9.3)
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
-  '@solid-primitives/bounds@0.0.118(solid-js@1.9.3)':
+  '@solid-primitives/bounds@0.0.122(solid-js@1.9.3)':
     dependencies:
       '@solid-primitives/event-listener': 2.3.3(solid-js@1.9.3)
-      '@solid-primitives/resize-observer': 2.0.25(solid-js@1.9.3)
-      '@solid-primitives/static-store': 0.0.5(solid-js@1.9.3)
+      '@solid-primitives/resize-observer': 2.1.0(solid-js@1.9.3)
+      '@solid-primitives/static-store': 0.0.8(solid-js@1.9.3)
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
-  '@solid-primitives/cursor@0.0.112(solid-js@1.9.3)':
-    dependencies:
-      '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
-      solid-js: 1.9.3
-
-  '@solid-primitives/event-bus@1.0.11(solid-js@1.9.3)':
+  '@solid-primitives/cursor@0.0.115(solid-js@1.9.3)':
     dependencies:
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
@@ -3727,6 +3759,11 @@ snapshots:
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
+  '@solid-primitives/event-listener@2.4.0(solid-js@1.9.3)':
+    dependencies:
+      '@solid-primitives/utils': 6.3.0(solid-js@1.9.3)
+      solid-js: 1.9.3
+
   '@solid-primitives/keyboard@1.2.8(solid-js@1.9.3)':
     dependencies:
       '@solid-primitives/event-listener': 2.3.3(solid-js@1.9.3)
@@ -3734,12 +3771,12 @@ snapshots:
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
-  '@solid-primitives/media@2.2.8(solid-js@1.9.3)':
+  '@solid-primitives/media@2.3.0(solid-js@1.9.3)':
     dependencies:
-      '@solid-primitives/event-listener': 2.3.3(solid-js@1.9.3)
-      '@solid-primitives/rootless': 1.4.5(solid-js@1.9.3)
-      '@solid-primitives/static-store': 0.0.8(solid-js@1.9.3)
-      '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
+      '@solid-primitives/event-listener': 2.4.0(solid-js@1.9.3)
+      '@solid-primitives/rootless': 1.5.0(solid-js@1.9.3)
+      '@solid-primitives/static-store': 0.1.0(solid-js@1.9.3)
+      '@solid-primitives/utils': 6.3.0(solid-js@1.9.3)
       solid-js: 1.9.3
 
   '@solid-primitives/platform@0.1.2(solid-js@1.9.3)':
@@ -3751,12 +3788,12 @@ snapshots:
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
-  '@solid-primitives/resize-observer@2.0.25(solid-js@1.9.3)':
+  '@solid-primitives/resize-observer@2.1.0(solid-js@1.9.3)':
     dependencies:
-      '@solid-primitives/event-listener': 2.3.3(solid-js@1.9.3)
-      '@solid-primitives/rootless': 1.4.5(solid-js@1.9.3)
-      '@solid-primitives/static-store': 0.0.8(solid-js@1.9.3)
-      '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
+      '@solid-primitives/event-listener': 2.4.0(solid-js@1.9.3)
+      '@solid-primitives/rootless': 1.5.0(solid-js@1.9.3)
+      '@solid-primitives/static-store': 0.1.0(solid-js@1.9.3)
+      '@solid-primitives/utils': 6.3.0(solid-js@1.9.3)
       solid-js: 1.9.3
 
   '@solid-primitives/rootless@1.4.5(solid-js@1.9.3)':
@@ -3764,13 +3801,13 @@ snapshots:
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
-  '@solid-primitives/scheduled@1.4.3(solid-js@1.9.3)':
+  '@solid-primitives/rootless@1.5.0(solid-js@1.9.3)':
     dependencies:
+      '@solid-primitives/utils': 6.3.0(solid-js@1.9.3)
       solid-js: 1.9.3
 
-  '@solid-primitives/static-store@0.0.5(solid-js@1.9.3)':
+  '@solid-primitives/scheduled@1.5.0(solid-js@1.9.3)':
     dependencies:
-      '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
   '@solid-primitives/static-store@0.0.8(solid-js@1.9.3)':
@@ -3778,7 +3815,12 @@ snapshots:
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
       solid-js: 1.9.3
 
-  '@solid-primitives/styles@0.0.111(solid-js@1.9.3)':
+  '@solid-primitives/static-store@0.1.0(solid-js@1.9.3)':
+    dependencies:
+      '@solid-primitives/utils': 6.3.0(solid-js@1.9.3)
+      solid-js: 1.9.3
+
+  '@solid-primitives/styles@0.0.114(solid-js@1.9.3)':
     dependencies:
       '@solid-primitives/rootless': 1.4.5(solid-js@1.9.3)
       '@solid-primitives/utils': 6.2.3(solid-js@1.9.3)
@@ -3788,42 +3830,79 @@ snapshots:
     dependencies:
       solid-js: 1.9.3
 
-  '@telegram-apps/bridge@1.9.1':
+  '@solid-primitives/utils@6.3.0(solid-js@1.9.3)':
+    dependencies:
+      solid-js: 1.9.3
+
+  '@telegram-apps/bridge@1.9.2':
     dependencies:
       '@telegram-apps/signals': 1.1.1
       '@telegram-apps/toolkit': 1.1.1
       '@telegram-apps/transformers': 1.2.2
       '@telegram-apps/types': 1.2.1
 
-  '@telegram-apps/navigation@1.0.12':
+  '@telegram-apps/bridge@2.3.0(typescript@5.7.3)':
     dependencies:
-      '@telegram-apps/bridge': 1.9.1
+      '@telegram-apps/signals': 1.1.1
+      '@telegram-apps/toolkit': 2.0.0
+      '@telegram-apps/transformers': 2.1.0(typescript@5.7.3)
+      '@telegram-apps/types': 2.0.0
+      better-promises: 0.4.0
+      error-kid: 0.0.4
+      mitt: 3.0.1
+      valibot: 1.0.0-beta.14(typescript@5.7.3)
+    transitivePeerDependencies:
+      - typescript
+
+  '@telegram-apps/navigation@1.0.13':
+    dependencies:
+      '@telegram-apps/bridge': 1.9.2
       '@telegram-apps/signals': 1.1.1
       '@telegram-apps/toolkit': 1.1.1
 
-  '@telegram-apps/sdk-solid@2.0.21(solid-js@1.9.3)':
+  '@telegram-apps/sdk-solid@3.0.5(solid-js@1.9.3)(typescript@5.7.3)':
     dependencies:
-      '@telegram-apps/sdk': 2.11.1
+      '@telegram-apps/sdk': 3.1.3(typescript@5.7.3)
       solid-js: 1.9.3
+    transitivePeerDependencies:
+      - typescript
 
-  '@telegram-apps/sdk@2.11.1':
+  '@telegram-apps/sdk@3.1.3(typescript@5.7.3)':
     dependencies:
-      '@telegram-apps/bridge': 1.9.1
-      '@telegram-apps/navigation': 1.0.12
+      '@telegram-apps/bridge': 2.3.0(typescript@5.7.3)
+      '@telegram-apps/navigation': 1.0.13
       '@telegram-apps/signals': 1.1.1
-      '@telegram-apps/toolkit': 1.1.1
-      '@telegram-apps/transformers': 1.2.2
+      '@telegram-apps/toolkit': 2.0.0
+      '@telegram-apps/transformers': 2.1.0(typescript@5.7.3)
+      '@telegram-apps/types': 2.0.0
+      better-promises: 0.4.0
+      error-kid: 0.0.4
+      valibot: 1.0.0-beta.14(typescript@5.7.3)
+    transitivePeerDependencies:
+      - typescript
 
   '@telegram-apps/signals@1.1.1': {}
 
   '@telegram-apps/toolkit@1.1.1': {}
+
+  '@telegram-apps/toolkit@2.0.0': {}
 
   '@telegram-apps/transformers@1.2.2':
     dependencies:
       '@telegram-apps/toolkit': 1.1.1
       '@telegram-apps/types': 1.2.1
 
+  '@telegram-apps/transformers@2.1.0(typescript@5.7.3)':
+    dependencies:
+      '@telegram-apps/toolkit': 2.0.0
+      '@telegram-apps/types': 2.0.0
+      valibot: 1.0.0-beta.14(typescript@5.7.3)
+    transitivePeerDependencies:
+      - typescript
+
   '@telegram-apps/types@1.2.1': {}
+
+  '@telegram-apps/types@2.0.0': {}
 
   '@tokenizer/token@0.3.0': {}
 
@@ -3868,13 +3947,13 @@ snapshots:
 
   '@types/semver@7.5.8': {}
 
-  '@typescript-eslint/eslint-plugin@7.8.0(@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.4.4))(eslint@8.57.0)(typescript@5.4.4)':
+  '@typescript-eslint/eslint-plugin@7.8.0(@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.7.3))(eslint@8.57.0)(typescript@5.7.3)':
     dependencies:
       '@eslint-community/regexpp': 4.10.0
-      '@typescript-eslint/parser': 7.8.0(eslint@8.57.0)(typescript@5.4.4)
+      '@typescript-eslint/parser': 7.8.0(eslint@8.57.0)(typescript@5.7.3)
       '@typescript-eslint/scope-manager': 7.8.0
-      '@typescript-eslint/type-utils': 7.8.0(eslint@8.57.0)(typescript@5.4.4)
-      '@typescript-eslint/utils': 7.8.0(eslint@8.57.0)(typescript@5.4.4)
+      '@typescript-eslint/type-utils': 7.8.0(eslint@8.57.0)(typescript@5.7.3)
+      '@typescript-eslint/utils': 7.8.0(eslint@8.57.0)(typescript@5.7.3)
       '@typescript-eslint/visitor-keys': 7.8.0
       debug: 4.3.4
       eslint: 8.57.0
@@ -3882,22 +3961,22 @@ snapshots:
       ignore: 5.3.1
       natural-compare: 1.4.0
       semver: 7.6.0
-      ts-api-utils: 1.3.0(typescript@5.4.4)
+      ts-api-utils: 1.3.0(typescript@5.7.3)
     optionalDependencies:
-      typescript: 5.4.4
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.4.4)':
+  '@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.7.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 7.8.0
       '@typescript-eslint/types': 7.8.0
-      '@typescript-eslint/typescript-estree': 7.8.0(typescript@5.4.4)
+      '@typescript-eslint/typescript-estree': 7.8.0(typescript@5.7.3)
       '@typescript-eslint/visitor-keys': 7.8.0
       debug: 4.3.4
       eslint: 8.57.0
     optionalDependencies:
-      typescript: 5.4.4
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
@@ -3911,15 +3990,15 @@ snapshots:
       '@typescript-eslint/types': 7.8.0
       '@typescript-eslint/visitor-keys': 7.8.0
 
-  '@typescript-eslint/type-utils@7.8.0(eslint@8.57.0)(typescript@5.4.4)':
+  '@typescript-eslint/type-utils@7.8.0(eslint@8.57.0)(typescript@5.7.3)':
     dependencies:
-      '@typescript-eslint/typescript-estree': 7.8.0(typescript@5.4.4)
-      '@typescript-eslint/utils': 7.8.0(eslint@8.57.0)(typescript@5.4.4)
+      '@typescript-eslint/typescript-estree': 7.8.0(typescript@5.7.3)
+      '@typescript-eslint/utils': 7.8.0(eslint@8.57.0)(typescript@5.7.3)
       debug: 4.3.4
       eslint: 8.57.0
-      ts-api-utils: 1.3.0(typescript@5.4.4)
+      ts-api-utils: 1.3.0(typescript@5.7.3)
     optionalDependencies:
-      typescript: 5.4.4
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
@@ -3927,7 +4006,7 @@ snapshots:
 
   '@typescript-eslint/types@7.8.0': {}
 
-  '@typescript-eslint/typescript-estree@7.6.0(typescript@5.4.4)':
+  '@typescript-eslint/typescript-estree@7.6.0(typescript@5.7.3)':
     dependencies:
       '@typescript-eslint/types': 7.6.0
       '@typescript-eslint/visitor-keys': 7.6.0
@@ -3936,13 +4015,13 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 9.0.4
       semver: 7.6.0
-      ts-api-utils: 1.3.0(typescript@5.4.4)
+      ts-api-utils: 1.3.0(typescript@5.7.3)
     optionalDependencies:
-      typescript: 5.4.4
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/typescript-estree@7.8.0(typescript@5.4.4)':
+  '@typescript-eslint/typescript-estree@7.8.0(typescript@5.7.3)':
     dependencies:
       '@typescript-eslint/types': 7.8.0
       '@typescript-eslint/visitor-keys': 7.8.0
@@ -3951,34 +4030,34 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 9.0.4
       semver: 7.6.0
-      ts-api-utils: 1.3.0(typescript@5.4.4)
+      ts-api-utils: 1.3.0(typescript@5.7.3)
     optionalDependencies:
-      typescript: 5.4.4
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@7.6.0(eslint@8.57.0)(typescript@5.4.4)':
+  '@typescript-eslint/utils@7.6.0(eslint@8.57.0)(typescript@5.7.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
       '@types/json-schema': 7.0.15
       '@types/semver': 7.5.8
       '@typescript-eslint/scope-manager': 7.6.0
       '@typescript-eslint/types': 7.6.0
-      '@typescript-eslint/typescript-estree': 7.6.0(typescript@5.4.4)
+      '@typescript-eslint/typescript-estree': 7.6.0(typescript@5.7.3)
       eslint: 8.57.0
       semver: 7.6.0
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  '@typescript-eslint/utils@7.8.0(eslint@8.57.0)(typescript@5.4.4)':
+  '@typescript-eslint/utils@7.8.0(eslint@8.57.0)(typescript@5.7.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
       '@types/json-schema': 7.0.15
       '@types/semver': 7.5.8
       '@typescript-eslint/scope-manager': 7.8.0
       '@typescript-eslint/types': 7.8.0
-      '@typescript-eslint/typescript-estree': 7.8.0(typescript@5.4.4)
+      '@typescript-eslint/typescript-estree': 7.8.0(typescript@5.7.3)
       eslint: 8.57.0
       semver: 7.6.0
     transitivePeerDependencies:
@@ -4080,6 +4159,10 @@ snapshots:
   base64-js@1.5.1: {}
 
   before-after-hook@2.2.3: {}
+
+  better-promises@0.4.0:
+    dependencies:
+      error-kid: 0.0.4
 
   bin-build@3.0.0:
     dependencies:
@@ -4521,6 +4604,8 @@ snapshots:
       is-arrayish: 0.2.1
     optional: true
 
+  error-kid@0.0.4: {}
+
   eruda@3.0.1: {}
 
   esbuild@0.24.0:
@@ -4556,9 +4641,9 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-solid@0.14.0(eslint@8.57.0)(typescript@5.4.4):
+  eslint-plugin-solid@0.14.0(eslint@8.57.0)(typescript@5.7.3):
     dependencies:
-      '@typescript-eslint/utils': 7.6.0(eslint@8.57.0)(typescript@5.4.4)
+      '@typescript-eslint/utils': 7.6.0(eslint@8.57.0)(typescript@5.7.3)
       eslint: 8.57.0
       estraverse: 5.3.0
       is-html: 2.0.0
@@ -5430,6 +5515,8 @@ snapshots:
   minimist@1.2.8:
     optional: true
 
+  mitt@3.0.1: {}
+
   ms@2.1.2: {}
 
   ms@2.1.3: {}
@@ -5966,13 +6053,13 @@ snapshots:
 
   slash@5.1.0: {}
 
-  solid-devtools@0.30.1(solid-js@1.9.3)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0)):
+  solid-devtools@0.33.0(solid-js@1.9.3)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0)):
     dependencies:
       '@babel/core': 7.24.4
       '@babel/plugin-syntax-typescript': 7.24.1(@babel/core@7.24.4)
       '@babel/types': 7.24.0
-      '@solid-devtools/debugger': 0.23.4(solid-js@1.9.3)
-      '@solid-devtools/shared': 0.13.2(solid-js@1.9.3)
+      '@solid-devtools/debugger': 0.26.0(solid-js@1.9.3)
+      '@solid-devtools/shared': 0.19.0(solid-js@1.9.3)
       solid-js: 1.9.3
     optionalDependencies:
       vite: 6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0)
@@ -6112,8 +6199,6 @@ snapshots:
       function-timeout: 1.0.2
       time-span: 5.1.0
 
-  superstruct@2.0.2: {}
-
   supports-color@2.0.0:
     optional: true
 
@@ -6206,13 +6291,13 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  ts-api-utils@1.3.0(typescript@5.4.4):
+  ts-api-utils@1.3.0(typescript@5.7.3):
     dependencies:
-      typescript: 5.4.4
+      typescript: 5.7.3
 
-  tsconfck@3.0.3(typescript@5.4.4):
+  tsconfck@3.0.3(typescript@5.7.3):
     optionalDependencies:
-      typescript: 5.4.4
+      typescript: 5.7.3
 
   tslib@2.8.1: {}
 
@@ -6228,18 +6313,18 @@ snapshots:
 
   type-fest@3.13.1: {}
 
-  typescript-eslint@7.8.0(eslint@8.57.0)(typescript@5.4.4):
+  typescript-eslint@7.8.0(eslint@8.57.0)(typescript@5.7.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 7.8.0(@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.4.4))(eslint@8.57.0)(typescript@5.4.4)
-      '@typescript-eslint/parser': 7.8.0(eslint@8.57.0)(typescript@5.4.4)
-      '@typescript-eslint/utils': 7.8.0(eslint@8.57.0)(typescript@5.4.4)
+      '@typescript-eslint/eslint-plugin': 7.8.0(@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.7.3))(eslint@8.57.0)(typescript@5.7.3)
+      '@typescript-eslint/parser': 7.8.0(eslint@8.57.0)(typescript@5.7.3)
+      '@typescript-eslint/utils': 7.8.0(eslint@8.57.0)(typescript@5.7.3)
       eslint: 8.57.0
     optionalDependencies:
-      typescript: 5.4.4
+      typescript: 5.7.3
     transitivePeerDependencies:
       - supports-color
 
-  typescript@5.4.4: {}
+  typescript@5.7.3: {}
 
   uint8array-extras@1.4.0: {}
 
@@ -6280,6 +6365,10 @@ snapshots:
 
   uuid@3.4.0: {}
 
+  valibot@1.0.0-beta.14(typescript@5.7.3):
+    optionalDependencies:
+      typescript: 5.7.3
+
   validate-html-nesting@1.2.2: {}
 
   validate-npm-package-license@3.0.4:
@@ -6313,11 +6402,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-tsconfig-paths@5.1.4(typescript@5.4.4)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0)):
+  vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0)):
     dependencies:
       debug: 4.3.7
       globrex: 0.1.2
-      tsconfck: 3.0.3(typescript@5.4.4)
+      tsconfck: 3.0.3(typescript@5.7.3)
     optionalDependencies:
       vite: 6.0.5(@types/node@20.12.5)(sass-embedded@1.83.0)
     transitivePeerDependencies:

@@ -1,5 +1,6 @@
 import { createMemo, mergeProps, splitProps } from 'solid-js';
-import { mergeClassNames } from '@telegram-apps/sdk-solid';
+
+import { mergeClassNames } from '@/helpers/classnames.js';
 
 import './Picture.scss';
 

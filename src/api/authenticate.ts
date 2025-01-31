@@ -1,10 +1,11 @@
-import type { AsyncOptions, CancelablePromise } from '@telegram-apps/sdk-solid';
-import { type } from 'superstruct';
+import type { AsyncOptions } from '@telegram-apps/sdk-solid';
+import type { AbortablePromise } from 'better-promises';
+import { looseObject } from 'valibot';
 
 import { gqlRequest, type GqlRequestResult } from '@/api/gqlRequest.js';
 import { AuthToken } from '@/validation/AuthToken.js';
 
-export interface AuthenticateOptions {
+export interface AuthenticateOptions extends AsyncOptions {
   apiBaseURL: string,
   appID: number,
   initData: string,
@@ -12,23 +13,22 @@ export interface AuthenticateOptions {
 
 /**
  * Authenticates the current user.
- * @param args - execution arguments
- * @param options - execution options
+ * @param options - execution options.
  */
-export function authenticate(
-  args: AuthenticateOptions,
-  options?: AsyncOptions,
-): CancelablePromise<GqlRequestResult<{ token: string; expiresAt: Date }>> {
+export function authenticate(options: AuthenticateOptions): AbortablePromise<GqlRequestResult<{
+  token: string;
+  expiresAt: Date;
+}>> {
   return gqlRequest(
-    args.apiBaseURL,
+    options.apiBaseURL,
     'mutation Authenticate($appID: Int, $initData: String!) {'
     + ' authenticateTelegram(appID: $appID, initData: $initData) {'
     + '  token'
     + '  expiresAt'
     + ' }'
     + '}',
-    { appID: args.appID, initData: args.initData },
-    type({ authenticateTelegram: AuthToken }),
+    { appID: options.appID, initData: options.initData },
+    looseObject({ authenticateTelegram: AuthToken }),
     options,
   ).then(v => v[0]
     ? [true, v[1].authenticateTelegram]

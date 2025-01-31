@@ -1,6 +1,6 @@
 import { onCleanup, onMount } from 'solid-js';
 import { postEvent } from '@telegram-apps/sdk-solid';
-import { any, create, string, type } from 'superstruct';
+import { looseObject, optional, parse, string, unknown } from 'valibot';
 
 import './AppContainer.scss';
 
@@ -48,10 +48,10 @@ export function AppContainer(props: {
     const onMessage = ({ data, source }: MessageEvent) => {
       let payload: { eventType: string; eventData?: any } | undefined;
       try {
-        payload = create(JSON.parse(data), type({
+        payload = parse(looseObject({
           eventType: string(),
-          eventData: any(),
-        }));
+          eventData: optional(unknown()),
+        }), JSON.parse(data));
       } catch (e) { /* empty */
       }
 

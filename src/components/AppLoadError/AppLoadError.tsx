@@ -1,5 +1,4 @@
 import { For, Match, Switch } from 'solid-js';
-import { StructError } from 'superstruct';
 
 import type { GqlRequestError } from '@/api/gqlRequest.js';
 import { AppError } from '@/components/AppError/AppError.js';
@@ -42,7 +41,7 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
                   {(error, idx) => (
                     <>
                       {idx() ? ', ' : ''}{error.message}&nbsp;
-                      <b>({error.code})</b>
+                      <b>({error.data.code})</b>
                     </>
                   )}
                 </For>
@@ -60,26 +59,12 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
         )}
       </Match>
       <Match when={whenInvalidData()}>
-        {err => {
-          const message = () => {
-            const e = err();
-            return (
-              <>
-                Server returned unexpected response:{' '}
-                {e instanceof StructError
-                  ? e.failures().map((f, idx) => (
-                    <>
-                      {idx ? ', ' : ''}
-                      <b>{f.key}</b>
-                      &nbsp;({f.message})
-                    </>
-                  ))
-                  : e.message}
-              </>
-            );
-          };
-          return <AppError title={oopsTitle} subtitle={message()}/>;
-        }}
+        {err => (
+          <AppError
+            title={oopsTitle}
+            subtitle={`Server returned unexpected response: ${err().message}`}
+          />
+        )}
       </Match>
       <Match when={whenIframe()}>
         {data => (

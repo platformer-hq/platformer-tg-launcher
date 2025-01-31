@@ -1,7 +1,9 @@
-export class GqlError extends Error {
-  constructor(public readonly code: string, message?: string) {
-    super(message);
-    this.name = 'GqlError';
-    Object.setPrototypeOf(this, GqlError.prototype);
-  }
-}
+import { errorClassWithData } from 'error-kid';
+
+export const [GqlError] = errorClassWithData<{
+  code: string;
+  message?: Maybe<string>;
+}, [code: string, message?: Maybe<string>]>(
+  'GqlError',
+  (code, message) => ({ code, message }),
+);

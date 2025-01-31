@@ -1,52 +1,128 @@
-import { createEffect, createResource, onCleanup, type ResourceSource } from 'solid-js';
+import {
+  createEffect,
+  createResource,
+  type InitializedResourceOptions,
+  type NoInfer,
+  type ResourceFetcher,
+  type ResourceOptions,
+  type ResourceSource,
+  type ResourceActions,
+} from 'solid-js';
 
 import type { ExecutionTuple } from '@/types/execution.js';
 
-/**
- * Creates a resource with some extended list of options, calling hooks.
- * @param source - fetcher source.
- * @param fetcher - fetcher function.
- * @param options - additional options.
- */
-export function createExecutionResource<Data, Err = unknown, Source = object>(
-  source: ResourceSource<Source>,
-  fetcher: (
-    source: Source,
-    options: { abortSignal: AbortSignal },
-  ) => ExecutionTuple<Data, Err> | PromiseLike<ExecutionTuple<Data, Err>>,
-  options?: {
-    abortSignal?: AbortSignal;
-    onError?(err: Err): void;
-    onData?(data: Data): void;
-  },
-) {
-  options ||= {};
-  const controller = new AbortController();
-  const result = createResource(
-    () => {
-      const s = typeof source === 'function' ? (source as any)() : source;
-      return [null, undefined, false].includes(s) ? false : {
-        options: { abortSignal: options.abortSignal || controller.signal },
-        source: s,
-      };
-    },
-    async (args) => fetcher(args.source, args.options),
+export interface ExecutionResourceHooks<D, E> {
+  onData?(data: D): void;
+  onError?(error: E): void;
+}
+
+interface Unresolved {
+  state: 'unresolved';
+  loading: false;
+  error: undefined;
+  latest: undefined;
+  (): undefined;
+}
+
+interface Pending {
+  state: 'pending';
+  loading: true;
+  error: undefined;
+  latest: undefined;
+  (): undefined;
+}
+
+interface Ready<T> {
+  state: 'ready';
+  loading: false;
+  error: undefined;
+  latest: T;
+  (): T;
+}
+
+interface Refreshing<T> {
+  state: 'refreshing';
+  loading: true;
+  error: undefined;
+  latest: T;
+  (): T;
+}
+
+interface Errored<T> {
+  state: 'errored';
+  loading: false;
+  error: T;
+  latest: never;
+  (): never;
+}
+
+type Resource<D, E> = Unresolved | Pending | Ready<D> | Refreshing<D> | Errored<E>;
+type ResourceReturn<D, E, R = unknown> = [Resource<D, E>, ResourceActions<D | undefined, R>];
+
+type InitializedResource<D, E> = Ready<D> | Refreshing<D> | Errored<E>;
+type InitializedResourceReturn<D, E, R = unknown> = [
+  InitializedResource<D, E>,
+  ResourceActions<D, R>
+];
+
+export function createExecutionResource<D, E, R = unknown>(
+  fetcher: ResourceFetcher<true, ExecutionTuple<D, E>, R>,
+  options?: ResourceOptions<NoInfer<D>, true> & ExecutionResourceHooks<D, E>,
+): ResourceReturn<D, E, R>;
+
+export function createExecutionResource<D, E, R = unknown>(
+  fetcher: ResourceFetcher<true, ExecutionTuple<D, E>, R>,
+  options: InitializedResourceOptions<NoInfer<D>, true> & ExecutionResourceHooks<D, E>,
+): InitializedResourceReturn<D, E, R>;
+
+export function createExecutionResource<D, E, S, R = unknown>(
+  source: ResourceSource<S>,
+  fetcher: ResourceFetcher<S, ExecutionTuple<D, E>, R>,
+  options: InitializedResourceOptions<NoInfer<D>, S> & ExecutionResourceHooks<D, E>,
+): InitializedResourceReturn<D, E, R>;
+
+export function createExecutionResource<D, E, S, R = unknown>(
+  source: ResourceSource<S>,
+  fetcher: ResourceFetcher<S, ExecutionTuple<D, E>, R>,
+  options?: ResourceOptions<NoInfer<D>, S> & ExecutionResourceHooks<D, E>,
+): ResourceReturn<D, E, R>;
+
+export function createExecutionResource<D, E, S, R = unknown>(
+  arg1: ResourceFetcher<true, ExecutionTuple<D, E>, R> | ResourceSource<S>,
+  arg2?:
+    | ResourceOptions<NoInfer<D>, true> & ExecutionResourceHooks<D, E>
+    | InitializedResourceOptions<NoInfer<D>, true> & ExecutionResourceHooks<D, E>
+    | ResourceFetcher<S, ExecutionTuple<D, E>, R>,
+  arg3?: ResourceOptions<NoInfer<D>, S> & ExecutionResourceHooks<D, E>,
+): ResourceReturn<D, E, R> | InitializedResourceReturn<D, E, R> {
+  let source: any;
+  let fetcher: any;
+  let options: any;
+  if (typeof arg2 === 'object' || !arg2) {
+    [fetcher, options] = [arg1, arg2];
+  } else {
+    [source, fetcher, options] = [arg1, arg2, arg3];
+  }
+
+  const wrappedFetcher = async (...args: Parameters<typeof fetcher>) => {
+    const tuple = await fetcher(...args);
+    if (tuple[0]) {
+      return tuple[1];
+    }
+    throw tuple[1];
+  };
+
+  const [resource, actions] = createResource(
+    source || wrappedFetcher as any,
+    wrappedFetcher || options,
+    options,
   );
 
-  onCleanup(() => {
-    controller.abort();
-  });
-
+  const { onData, onError } = options || {};
   createEffect(() => {
-    const [resource] = result;
-    if (resource.state === 'ready') {
-      const tuple = resource();
-      const { onData, onError } = options;
-      tuple[0]
-        ? onData && onData(tuple[1])
-        : onError && onError(tuple[1]);
-    }
+    resource.state === 'ready' && onData && onData(resource());
+    resource.state === 'errored' && onError && onError(resource.error.cause);
   });
 
-  return result;
+  return [resource, actions];
 }

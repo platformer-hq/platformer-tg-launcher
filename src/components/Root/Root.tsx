@@ -1,66 +1,106 @@
-import { ErrorBoundary, Show, For } from 'solid-js';
+import { createMemo, createResource, createSignal, ErrorBoundary, Show } from 'solid-js';
 import {
   type Platform,
   retrieveLaunchParams,
-  serializeLaunchParams,
+  retrieveRawLaunchParams,
+  retrieveRawInitData,
+  transformQueryUsing,
 } from '@telegram-apps/sdk-solid';
 import {
-  coerce,
-  create,
-  defaulted,
   instance,
+  looseObject,
+  optional,
+  pipe,
   string,
-  type StructError,
-  type,
-} from 'superstruct';
+  transform,
+  parse,
+  ValiError,
+  union,
+} from 'valibot';
 
-import { BootstrapApp } from '@/components/BootstrapApp.js';
-import { RootErrorBoundary } from '@/components/RootErrorBoundary.js';
-import { PositiveIntFromStr } from '@/validation/PositiveIntFromStr.js';
-import { maybe } from '@/validation/maybe.js';
+import { BootstrapApp } from '@/components/BootstrapApp/BootstrapApp.js';
+import { RootErrorBoundary } from '@/components/RootErrorBoundary/RootErrorBoundary.js';
+import { positiveIntFromStr } from '@/validation/positiveIntFromStr.js';
 import { splitExecutionTuple } from '@/helpers/splitExecutionTuple.js';
 import { AppError } from '@/components/AppError/AppError.js';
+import { init } from '@/components/Root/init.js';
+import { AppLoading } from '@/components/AppLoading/AppLoading.js';
 
 import './Root.scss';
 
-function Inner() {
-  const lp = retrieveLaunchParams();
-  const [args, error] = splitExecutionTuple<{
+function useLauncherOptions() {
+  return splitExecutionTuple<{
     appID: number;
     apiBaseURL: string;
     fallbackURL?: Maybe<string>;
     initTimeout: number;
     loadTimeout: number;
-  }, [field: string, reason: string][]>(() => {
+  }, string>(() => {
     try {
-      const argsObj = create(
+      const argsObject = parse(
+        pipe(
+          union([instance(URLSearchParams), string()]),
+          transformQueryUsing(
+            looseObject({
+              app_id: positiveIntFromStr(),
+              api_base_url: optional(
+                pipe(
+                  string(),
+                  transform(v => new URL(v, window.location.origin).toString()),
+                ),
+                'https://platformer.tg/api/gql',
+              ),
+              fallback_url: optional(string()),
+              init_timeout: optional(positiveIntFromStr(), '5000'),
+              load_timeout: optional(positiveIntFromStr(), '10000'),
+            }),
+          ),
+        ),
         new URLSearchParams(
           // Telegram API has a bug replacing & with &amp; for some reason. We are replacing it back.
           window.location.search.replace(/&amp;/g, '&'),
         ),
-        coerce(
-          type({
-            app_id: PositiveIntFromStr,
-            api_base_url: defaulted(string(), 'https://platformer.tg/api/gql'),
-            fallback_url: maybe(string()),
-            init_timeout: defaulted(PositiveIntFromStr, 5000),
-            load_timeout: defaulted(PositiveIntFromStr, 10000),
-          }),
-          instance(URLSearchParams),
-          searchParams => Object.fromEntries(searchParams.entries()),
-        ),
       );
       return [true, {
-        appID: argsObj.app_id,
-        apiBaseURL: new URL(argsObj.api_base_url, window.location.origin).toString(),
-        fallbackURL: argsObj.fallback_url,
-        initTimeout: argsObj.init_timeout,
-        loadTimeout: argsObj.load_timeout,
+        appID: argsObject.app_id,
+        apiBaseURL: argsObject.api_base_url,
+        fallbackURL: argsObject.fallback_url,
+        initTimeout: argsObject.init_timeout,
+        loadTimeout: argsObject.load_timeout,
       }];
     } catch (e) {
-      return [false, (e as StructError).failures().map(f => [f.key, f.message])];
+      return [false, (e as ValiError<never>).message];
     }
   });
+}
+
+function Inner() {
+  const [$options, $error] = useLauncherOptions();
+  const {
+    tgWebAppPlatform: platform,
+    tgWebAppStartParam: startParam,
+  } = retrieveLaunchParams();
+
+  // Initialize the SDK.
+  const [resource] = createResource(() => {
+    return init((startParam || '').includes('platformer_debug') || import.meta.env.DEV);
+  });
+
+  // Wait for the bootstrapper to load.
+  const [bootstrapperReady, setBootstrapperReady] = createSignal(false);
+
+  // We are sanitizing the hash property for security purposes, so Platformer could not use this
+  // init data to impersonate user.
+  // Instead, Platformer uses the "signature" property allowing third parties to validate the
+  // init data.
+  const sanitizedInitDataQuery = new URLSearchParams(retrieveRawInitData() || '');
+  sanitizedInitDataQuery.set('hash', '');
+  const sanitizedInitData = sanitizedInitDataQuery.toString();
+
+  // We also do the same with the launch parameters which are also sent to Platformer.
+  const sanitizedLaunchParamsQuery = new URLSearchParams(retrieveRawLaunchParams());
+  sanitizedLaunchParamsQuery.set('tgWebAppData', sanitizedInitData);
+  const sanitizedLaunchParams = sanitizedLaunchParamsQuery.toString();
 
   return (
     <main
@@ -69,52 +109,68 @@ function Inner() {
         // TODO: We should probably not add this class only when the platform is mobile. We
         //  should do it only if the platform is mobile and the wrapped mini app wants to solve
         //  the problem, solved by this class.
-        'root--mobile': ([
-          'android',
-          'android_x',
-          'ios',
-        ] satisfies Platform[]).includes(lp.platform),
+        'root--mobile': (['android', 'android_x', 'ios'] satisfies Platform[]).includes(platform),
       }}
     >
       <Show
-        when={args.ok() && args()}
-        fallback={
-          <AppError
-            title="Configuration is invalid"
-            subtitle={
-              <For each={error()}>
-                {(item, idx) => (
-                  <>
-                    {idx() ? ', ' : ''}
-                    <b>{item[0]}</b>
-                    &nbsp;
-                    <i>({item[1]})</i>
-                  </>
-                )}
-              </For>
-            }
-          />
-        }
+        when={$options.ok() && $options()}
+        fallback={<AppError title="Configuration is invalid" subtitle={$error()}/>}
       >
-        {data => (
+        {$data => (
           <Show
-            when={lp.initDataRaw}
+            when={sanitizedInitData}
             fallback={
               <AppError
                 title="Init data is missing"
-                subtitle="For some reason, init data is missing. It is more likely that the application was launched improperly"
+                subtitle="For some reason, init data is missing. It is the most likely that the application was launched improperly"
               />
             }
           >
-            {initData => (
-              <BootstrapApp
-                {...data()}
-                // TODO: We should use launch params raw representation. Otherwise, we may lose some
-                //  useful data.
-                launchParams={serializeLaunchParams(lp)}
-                initData={initData()}
-              />
-            )}
+            {$initData => {
+              // Compute fallback URL in case something went wrong with Platformer.
+              const $fallbackURL = createMemo(() => {
+                const { fallbackURL } = $data();
+                if (!fallbackURL) {
+                  return;
+                }
+
+                // Create a correct fallback URL.
+                // As long as it may have a hash part, we should properly append launch parameters.
+                const url = new URL(fallbackURL);
+                let hash: string;
+                if (url.hash) {
+                  // We should use launch params and merge them with parameters, defined in
+                  // the URL hash.
+                  const qp = new URLSearchParams(sanitizedLaunchParams);
+                  new URLSearchParams(url.hash.slice(1)).forEach((v, k) => {
+                    qp.set(k, v);
+                  });
+                  hash = qp.toString();
+                } else {
+                  hash = sanitizedLaunchParams;
+                }
+                url.hash = `#${hash}`;
+
+                return url.toString();
+              });
+
+              return (
+                <>
+                  <Show when={!bootstrapperReady() || resource.loading}>
+                    <AppLoading/>
+                  </Show>
+                  <BootstrapApp
+                    {...$data()}
+                    fallbackURL={$fallbackURL()}
+                    initData={$initData()}
+                    launchParams={sanitizedLaunchParams}
+                    onReady={() => {
+                      setBootstrapperReady(true);
+                    }}
+                  />
+                </>
+              );
+            }}
           </Show>
         )}
       </Show>

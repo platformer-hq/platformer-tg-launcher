@@ -1,4 +1,5 @@
 import type { Accessor } from 'solid-js';
+
 import type { ExecutionTuple } from '@/types/execution.js';
 
 interface SplitResultSignal<T> extends Accessor<T> {
@@ -6,31 +7,29 @@ interface SplitResultSignal<T> extends Accessor<T> {
 }
 
 function createSignal<T, E>(
-  executionResult: Accessor<ExecutionTuple<T, E>>,
-  isOk: true,
+  $executionResult: Accessor<ExecutionTuple<T, E>>,
+  extractSuccessful: true,
 ): SplitResultSignal<T>;
 
 function createSignal<T, E>(
-  executionResult: Accessor<ExecutionTuple<T, E>>,
-  isOk: false,
+  $executionResult: Accessor<ExecutionTuple<T, E>>,
+  extractSuccessful: false,
 ): SplitResultSignal<E>;
 
 function createSignal<T, E>(
-  executionResult: Accessor<ExecutionTuple<T, E>>,
-  status: boolean,
+  $executionResult: Accessor<ExecutionTuple<T, E>>,
+  extractSuccessful: boolean,
 ): SplitResultSignal<T | E> {
   return Object.assign(
     () => {
-      const tuple = executionResult();
-      if (tuple[0] !== status) {
+      const tuple = $executionResult();
+      if (tuple[0] !== extractSuccessful) {
         throw new Error('Illegal data access. Data is not ready');
       }
       return tuple[1];
     },
     {
-      ok() {
-        return executionResult()[0] === status;
-      },
+      ok: () => $executionResult()[0] === extractSuccessful,
     },
   );
 }
@@ -38,14 +37,14 @@ function createSignal<T, E>(
 /**
  * Splits a signal, containing the operation execution tuple into two signals, containing
  * data and error.
- * @param executionTuple - signal returning an execution result.
+ * @param $executionResult - signal returning an execution result.
  */
-export function splitExecutionTuple<T, E>(executionTuple: Accessor<ExecutionTuple<T, E>>): [
+export function splitExecutionTuple<T, E>($executionResult: Accessor<ExecutionTuple<T, E>>): [
   SplitResultSignal<T>,
   SplitResultSignal<E>
 ] {
   return [
-    createSignal(executionTuple, true),
-    createSignal(executionTuple, false),
+    createSignal($executionResult, true),
+    createSignal($executionResult, false),
   ];
 }
