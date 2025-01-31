@@ -21,6 +21,7 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
   const whenHttp = withError(e => e[0] === 'http' ? [e[1], e[2]] as [number, string] : false);
   const whenInvalidData = withError(e => e[0] === 'invalid-data' ? e[1] : false);
   const whenIframe = withError(e => e[0] === 'iframe' ? [e[1]] : false);
+  const whenExecution = withError(e => e[0] === 'execution' ? e[1] : false);
 
   return (
     <Switch>
@@ -31,17 +32,17 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
         />
       </Match>
       <Match when={whenGql()}>
-        {errors => (
+        {$errors => (
           <AppError
             title={oopsTitle}
             subtitle={
               <>
                 Server returned errors:{' '}
-                <For each={errors()}>
-                  {(error, idx) => (
+                <For each={$errors()}>
+                  {($error, idx) => (
                     <>
-                      {idx() ? ', ' : ''}{error.message}&nbsp;
-                      <b>({error.data.code})</b>
+                      {idx() ? ', ' : ''}{$error.message}&nbsp;
+                      <b>({$error.data.code})</b>
                     </>
                   )}
                 </For>
@@ -51,28 +52,36 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
         )}
       </Match>
       <Match when={whenHttp()}>
-        {err => (
+        {$error => (
           <AppError
             title={networkErrTitle}
-            subtitle={`Server responded with status ${err()[0]}: ${err()[1]}`}
+            subtitle={`Server responded with status ${$error()[0]}: ${$error()[1]}`}
           />
         )}
       </Match>
       <Match when={whenInvalidData()}>
-        {err => (
+        {$error => (
           <AppError
             title={oopsTitle}
-            subtitle={`Server returned unexpected response: ${err().message}`}
+            subtitle={`Server returned unexpected response: ${$error().message}`}
           />
         )}
       </Match>
       <Match when={whenIframe()}>
-        {data => (
+        {$tuple => (
           <AppError
             title={oopsTitle}
             subtitle={
-              `Application failed to load due to ${data()[0] ? 'timeout' : 'unknown reason'}`
+              `Application failed to load due to ${$tuple()[0] ? 'timeout' : 'unknown reason'}`
             }
+          />
+        )}
+      </Match>
+      <Match when={whenExecution()}>
+        {$error => (
+          <AppError
+            title={oopsTitle}
+            subtitle={`Application failed to load. ${$error().message}`}
           />
         )}
       </Match>
