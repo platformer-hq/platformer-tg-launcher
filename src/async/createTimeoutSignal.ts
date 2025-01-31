@@ -1,6 +1,5 @@
-import { Accessor, createEffect, createSignal, onCleanup } from 'solid-js';
-
-import { TimeoutError } from '@/async/TimeoutError.js';
+import { type Accessor, createEffect, createSignal, onCleanup } from 'solid-js';
+import { TimeoutError } from 'better-promises';
 
 /**
  * Creates a new self-cleaning-up abort signal.
