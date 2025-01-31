@@ -22,7 +22,7 @@ import { BootstrapApp } from '@/components/BootstrapApp/BootstrapApp.js';
 import { RootErrorBoundary } from '@/components/RootErrorBoundary/RootErrorBoundary.js';
 import { positiveIntFromStr } from '@/validation/positiveIntFromStr.js';
 import { splitExecutionTuple } from '@/helpers/splitExecutionTuple.js';
-import { AppError } from '@/components/AppError/AppError.js';
+import { LauncherError } from '@/components/LauncherError/LauncherError.js';
 import { init } from '@/components/Root/init.js';
 import { AppLoading } from '@/components/AppLoading/AppLoading.js';
 
@@ -115,13 +115,13 @@ function Inner() {
     >
       <Show
         when={$options.ok() && $options()}
-        fallback={<AppError title="Configuration is invalid" subtitle={$error()}/>}
+        fallback={<LauncherError title="Configuration is invalid" subtitle={$error()}/>}
       >
         {$data => (
           <Show
             when={sanitizedInitData}
             fallback={
-              <AppError
+              <LauncherError
                 title="Init data is missing"
                 subtitle="For some reason, init data is missing. It is the most likely that the application was launched improperly"
               />

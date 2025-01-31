@@ -9,7 +9,7 @@ import {
 
 import { AppContainer } from '@/components/AppContainer/AppContainer.js';
 import { AppNotFound } from '@/components/AppNotFound/AppNotFound.js';
-import { AppLoadError, type AppLoadErrorError } from '@/components/AppLoadError/AppLoadError.js';
+import { LauncherLoadError, type AppLoadErrorError } from '@/components/LauncherLoadError/LauncherLoadError.js';
 import { AppNoURL } from '@/components/AppNoURL/AppNoURL.js';
 import { createTimeoutSignal } from '@/async/createTimeoutSignal.js';
 import { getAuthTokenFromStorage } from '@/storage/auth-token.js';
@@ -106,7 +106,7 @@ function BasicBootstrap(props: {
                 onMount(() => {
                   props.onError($err());
                 });
-                return <AppLoadError error={$err()}/>;
+                return <LauncherLoadError error={$err()}/>;
               }}
             </Match>
           </Switch>
@@ -153,7 +153,7 @@ export function BootstrapApp(props: {
   return (
     <Switch>
       <Match when={$error()}>
-        {$err => <AppLoadError error={$err()}/>}
+        {$err => <LauncherLoadError error={$err()}/>}
       </Match>
       <Match when={true}>
         <BasicBootstrap

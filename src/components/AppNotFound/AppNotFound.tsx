@@ -1,8 +1,8 @@
-import { AppError } from '@/components/AppError/AppError.js';
+import { LauncherError } from '@/components/LauncherError/LauncherError.js';
 
 export function AppNotFound() {
   return (
-    <AppError
+    <LauncherError
       title="App not found"
       subtitle="This application doesn't exist or was hidden by the owner"
     />

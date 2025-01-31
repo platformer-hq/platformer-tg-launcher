@@ -1,8 +1,8 @@
-import { AppLoadError } from '@/components/AppLoadError/AppLoadError.js';
+import { LauncherLoadError } from '@/components/LauncherLoadError/LauncherLoadError.js';
 
 /**
  * Error boundary used in the application's root.
  */
 export function RootErrorBoundary(error: unknown) {
-  return <AppLoadError error={['unknown', error]}/>;
+  return <LauncherLoadError error={['unknown', error]}/>;
 }

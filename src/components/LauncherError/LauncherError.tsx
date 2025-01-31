@@ -2,6 +2,6 @@ import { StatusPage, type StatusPageProps } from '@/components/StatusPage/Status
 
 import image from './sad.png?process';
 
-export function AppError(props: Pick<StatusPageProps, 'title' | 'subtitle'>) {
+export function LauncherError(props: Pick<StatusPageProps, 'title' | 'subtitle'>) {
   return <StatusPage {...props} image={image}/>;
 }

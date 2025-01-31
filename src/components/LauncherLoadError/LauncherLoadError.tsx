@@ -1,7 +1,7 @@
 import { For, Match, Switch } from 'solid-js';
 
 import type { GqlRequestError } from '@/api/gqlRequest.js';
-import { AppError } from '@/components/AppError/AppError.js';
+import { LauncherError } from '@/components/LauncherError/LauncherError.js';
 
 export type AppLoadErrorError =
   | GqlRequestError
@@ -11,7 +11,7 @@ export type AppLoadErrorError =
 /**
  * Used to handle all kinds of GQL request errors.
  */
-export function AppLoadError(props: { error: AppLoadErrorError }) {
+export function LauncherLoadError(props: { error: AppLoadErrorError }) {
   const networkErrTitle = 'Network error';
   const oopsTitle = 'Oops!';
 
@@ -30,14 +30,14 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
   return (
     <Switch>
       <Match when={whenFetch()}>
-        <AppError
+        <LauncherError
           title={networkErrTitle}
           subtitle="Unable to send request to the server. The server is unreachable"
         />
       </Match>
       <Match when={whenGql()}>
         {$errors => (
-          <AppError
+          <LauncherError
             title={oopsTitle}
             subtitle={
               <>
@@ -57,7 +57,7 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
       </Match>
       <Match when={whenHttp()}>
         {$error => (
-          <AppError
+          <LauncherError
             title={networkErrTitle}
             subtitle={`Server responded with status ${$error()[0]}: ${$error()[1]}`}
           />
@@ -69,12 +69,12 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
             const error = $error();
             return `Unknown error occurred${error instanceof Error ? `: ${error.message}` : ''}`;
           };
-          return <AppError title={oopsTitle} subtitle={message()}/>;
+          return <LauncherError title={oopsTitle} subtitle={message()}/>;
         }}
       </Match>
       <Match when={whenInvalidData()}>
         {$error => (
-          <AppError
+          <LauncherError
             title={oopsTitle}
             subtitle={`Server returned unexpected response: ${$error().message}`}
           />
@@ -82,7 +82,7 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
       </Match>
       <Match when={whenIframe()}>
         {$tuple => (
-          <AppError
+          <LauncherError
             title={oopsTitle}
             subtitle={
               `Application failed to load due to ${$tuple()[0] ? 'timeout' : 'unknown reason'}`
@@ -92,7 +92,7 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
       </Match>
       <Match when={whenExecution()}>
         {$error => (
-          <AppError
+          <LauncherError
             title={oopsTitle}
             subtitle={`Application failed to load. ${$error().message}`}
           />
