@@ -3,7 +3,10 @@ import { For, Match, Switch } from 'solid-js';
 import type { GqlRequestError } from '@/api/gqlRequest.js';
 import { AppError } from '@/components/AppError/AppError.js';
 
-export type AppLoadErrorError = GqlRequestError | ['iframe', timeout?: boolean];
+export type AppLoadErrorError =
+  | GqlRequestError
+  | ['iframe', timeout?: boolean]
+  | ['unknown', unknown];
 
 /**
  * Used to handle all kinds of GQL request errors.
@@ -22,6 +25,7 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
   const whenInvalidData = withError(e => e[0] === 'invalid-data' ? e[1] : false);
   const whenIframe = withError(e => e[0] === 'iframe' ? [e[1]] : false);
   const whenExecution = withError(e => e[0] === 'execution' ? e[1] : false);
+  const whenUnknown = withError(e => e[0] === 'unknown' ? e[1] : false);
 
   return (
     <Switch>
@@ -58,6 +62,15 @@ export function AppLoadError(props: { error: AppLoadErrorError }) {
             subtitle={`Server responded with status ${$error()[0]}: ${$error()[1]}`}
           />
         )}
+      </Match>
+      <Match when={whenUnknown()}>
+        {$error => {
+          const message = () => {
+            const error = $error();
+            return `Unknown error occurred${error instanceof Error ? `: ${error.message}` : ''}`;
+          };
+          return <AppError title={oopsTitle} subtitle={message()}/>;
+        }}
       </Match>
       <Match when={whenInvalidData()}>
         {$error => (
