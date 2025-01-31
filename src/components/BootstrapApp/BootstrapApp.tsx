@@ -2,14 +2,19 @@ import {
   createEffect,
   createSignal,
   Match,
-  mergeProps, onMount,
+  mergeProps,
+  onMount,
+  Show,
   splitProps,
   Switch,
 } from 'solid-js';
 
 import { AppContainer } from '@/components/AppContainer/AppContainer.js';
 import { AppNotFound } from '@/components/AppNotFound/AppNotFound.js';
-import { LauncherLoadError, type AppLoadErrorError } from '@/components/LauncherLoadError/LauncherLoadError.js';
+import {
+  LauncherLoadError,
+  type AppLoadErrorError,
+} from '@/components/LauncherLoadError/LauncherLoadError.js';
 import { AppNoURL } from '@/components/AppNoURL/AppNoURL.js';
 import { createTimeoutSignal } from '@/async/createTimeoutSignal.js';
 import { getAuthTokenFromStorage } from '@/storage/auth-token.js';
@@ -84,32 +89,30 @@ function BasicBootstrap(props: {
     <Switch>
       <Match when={$error()}>
         {$err => (
-          <Switch>
-            <Match when={props.fallbackURL}>
-              {$url => (
-                <BootstrappedContainer
-                  {...props}
-                  url={$url()}
-                  onReady={() => {
-                    props.onReady($url());
-                  }}
-                  onError={error => {
-                    props.onError(error, $url());
-                  }}
-                />
-              )}
-            </Match>
-            <Match when={true}>
-              {(v) => {
-                // We don't have a fallback URL. It means that the application failed to load,
-                // and we have nothing to display instead of the error screen.
-                onMount(() => {
-                  props.onError($err());
-                });
-                return <LauncherLoadError error={$err()}/>;
-              }}
-            </Match>
-          </Switch>
+          <Show
+            when={props.fallbackURL}
+            fallback={(() => {
+              // We don't have a fallback URL. It means that the application failed to load,
+              // and we have nothing to display instead of the error screen.
+              onMount(() => {
+                props.onError($err());
+              });
+              return <LauncherLoadError error={$err()}/>;
+            })()}
+          >
+            {$url => (
+              <BootstrappedContainer
+                {...props}
+                url={$url()}
+                onReady={() => {
+                  props.onReady($url());
+                }}
+                onError={error => {
+                  props.onError(error, $url());
+                }}
+              />
+            )}
+          </Show>
         )}
       </Match>
       <Match when={$app()}>
