@@ -68,6 +68,27 @@ the [web_app_ready](https://docs.telegram-mini-apps.com/platform/methods#web-app
 To prevent uncontrollable behavior, Platformer does not automatically display the application when
 all assets are loaded (unlike Telegram). Therefore, calling the `web_app_ready` method is required.
 
+## Security Concerns
+
+Security is one of Platformer's most important aspects.
+
+Platformer uses local storage solely to store its authorization token. It does not use Telegram's
+Cloud Storage or any other storage, as Platformer cannot guarantee that data stored there cannot be
+reused. This approach prevents other applications from stealing and using the token.
+
+You may not realize it, but the Platformer launcher handles the most critical, important, and
+sensitive type of data an app can
+have—[init data](https://docs.telegram-mini-apps.com/platform/init-data). To ensure developers do
+not worry about Platformer misusing this data (e.g., impersonating a user in their applications),
+the launcher removes the `hash` property from the init data, preventing Platformer from using it
+elsewhere.
+
+Instead, Platformer leverages a recently added feature
+called [Third-Party Validation](https://docs.telegram-mini-apps.com/platform/init-data#using-telegram-public-key),
+which allows third-party projects to validate init data using the `signature` property. Thanks to
+this feature, Platformer only requires you to specify your Bot's identifier in the admin panel for
+your Mini App.
+
 ## Environment Support
 
 [//]: # (TODO)
