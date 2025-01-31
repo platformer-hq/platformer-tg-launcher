@@ -98,6 +98,7 @@ function Inner() {
   const sanitizedInitData = sanitizedInitDataQuery.toString();
 
   // We also do the same with the launch parameters which are also sent to Platformer.
+  const rawLaunchParams = retrieveRawLaunchParams();
   const sanitizedLaunchParamsQuery = new URLSearchParams(retrieveRawLaunchParams());
   sanitizedLaunchParamsQuery.set('tgWebAppData', sanitizedInitData);
   const sanitizedLaunchParams = sanitizedLaunchParamsQuery.toString();
@@ -162,8 +163,9 @@ function Inner() {
                   <BootstrapApp
                     {...$data()}
                     fallbackURL={$fallbackURL()}
-                    initData={$initData()}
-                    launchParams={sanitizedLaunchParams}
+                    initDataSanitized={$initData()}
+                    launchParams={rawLaunchParams}
+                    launchParamsSanitized={sanitizedLaunchParams}
                     onReady={() => {
                       setBootstrapperReady(true);
                     }}

@@ -38,29 +38,40 @@ function BootstrappedContainer(props: {
 }
 
 function BasicBootstrap(props: {
-  abortSignal: AbortSignal;
   apiBaseURL: string;
   appID: number;
   fallbackURL?: Maybe<string>;
-  initData: string;
+  initDataSanitized: string;
+  initTimeout: number;
   launchParams: string;
+  launchParamsSanitized: string;
   loadTimeout: number;
   onError: (error: AppLoadErrorError, fallbackURL?: string) => void;
   onReady: (fallbackURL?: string) => void;
 }) {
+  const $abortSignal = createTimeoutSignal(() => props.initTimeout);
   const [$error, setError] = createSignal<AppLoadErrorError>();
+  const requestsOptions = () => mergeProps(props, {
+    abortSignal: $abortSignal(),
+    launchParams: props.launchParamsSanitized,
+    initData: props.initDataSanitized,
+  });
 
   // Retrieve Platformer authorization token.
-  const [$authToken] = createExecutionResource(props, async options => {
+  const [$authToken] = createExecutionResource(requestsOptions, async options => {
     const token = getAuthTokenFromStorage();
     return token ? [true, token] : authenticate(options);
   }, { onError: setError });
 
   // Retrieve application data.
-  const [$app] = createExecutionResource(() => {
-    const authToken = $authToken.state === 'ready' ? $authToken().token : undefined;
-    return authToken ? mergeProps(props, { authToken }) : false;
-  }, getAppUrl, { onError: setError });
+  const [$app] = createExecutionResource(
+    () => {
+      const authToken = $authToken.state === 'ready' ? $authToken().token : undefined;
+      return authToken ? mergeProps(requestsOptions(), { authToken }) : false;
+    },
+    getAppUrl,
+    { onError: setError },
+  );
 
   // If some error occurred, and we have no fallback URL specified, we should notify the parent
   // component about the error.
@@ -130,14 +141,14 @@ export function BootstrapApp(props: {
   apiBaseURL: string;
   appID: number;
   fallbackURL?: Maybe<string>;
-  initData: string;
+  initDataSanitized: string;
   initTimeout: number;
   launchParams: string;
+  launchParamsSanitized: string;
   loadTimeout: number;
   onReady: () => void;
 }) {
   const [$error, setError] = createSignal<AppLoadErrorError>();
-  const $abortSignal = createTimeoutSignal(() => props.initTimeout);
 
   return (
     <Switch>
@@ -146,7 +157,6 @@ export function BootstrapApp(props: {
       </Match>
       <Match when={true}>
         <BasicBootstrap
-          abortSignal={$abortSignal()}
           {...props}
           onError={(error, fallbackURL) => {
             fallbackURL && console.error('Fallback URL failed to load:', fallbackURL);
