@@ -158,7 +158,7 @@ function Inner() {
               return (
                 <>
                   <Show when={!bootstrapperReady() || resource.loading}>
-                    <AppLoading/>
+                    <AppLoading platform={platform}/>
                   </Show>
                   <BootstrapApp
                     {...$data()}
