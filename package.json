@@ -20,10 +20,13 @@
     "access": "public"
   },
   "dependencies": {
+    "@sentry/solid": "^9.1.0",
     "@telegram-apps/sdk-solid": "^3.0.10",
+    "@types/mixpanel-browser": "^2.51.0",
     "better-promises": "^0.4.0",
     "error-kid": "^0.0.4",
     "eruda": "^3.0.1",
+    "mixpanel-browser": "^2.60.0",
     "solid-js": "^1.9.3",
     "valibot": "1.0.0-beta.14"
   },

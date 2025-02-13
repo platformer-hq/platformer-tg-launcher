@@ -14,6 +14,32 @@ export async function init(debug: boolean) {
   setDebug(debug);
   initSDK();
 
+  // Init Mixpanel.
+  import('mixpanel-browser')
+    .then(({ default: mixpanel }) => {
+      mixpanel.init('cd00b1f58f9d1fab5d5407fadcf2fba9', {
+        debug,
+        track_pageview: true,
+        persistence: 'localStorage',
+      });
+    })
+    .catch(e => {
+      console.error('Something went wrong with Mixpanel:', e);
+    });
+
+  // Init Sentry.
+  import('./sentry.js')
+    .then(({ init }) => {
+      init({
+        dsn: 'https://8888815a88eb8e06bd1ac55195df9ab0@o992980.ingest.us.sentry.io/4508812774473728',
+        environment: import.meta.env.MODE,
+        debug,
+      });
+    })
+    .catch(e => {
+      console.error('Something went wrong with Sentry:', e);
+    });
+
   // Add Eruda if needed.
   debug && import('eruda')
     .then(({ default: eruda }) => {
