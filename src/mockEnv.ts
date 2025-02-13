@@ -51,11 +51,13 @@ if (import.meta.env.DEV) {
         tgWebAppThemeParams: themeParams,
         tgWebAppData: new URLSearchParams([
           ['user', JSON.stringify({
+            id: 1,
             first_name: 'Pavel',
           })],
           ['hash', ''],
+          ['signature', ''],
           ['auth_date', Date.now().toString()],
-        ]),
+        ]).toString(),
         tgWebAppStartParam: 'debug',
         tgWebAppVersion: '8',
         tgWebAppPlatform: 'tdesktop',
