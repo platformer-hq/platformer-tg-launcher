@@ -118,9 +118,6 @@ function BasicBootstrap(props: {
       <Match when={$app()}>
         {$tuple => (
           <Switch fallback={<AppNoURL/>}>
-            <Match when={!$tuple()[0]}>
-              <AppNotFound/>
-            </Match>
             <Match when={$tuple()[1]}>
               {$url => (
                 <BootstrappedContainer
@@ -129,6 +126,27 @@ function BasicBootstrap(props: {
                   onError={setError}
                 />
               )}
+            </Match>
+            <Match
+              when={
+                !$tuple()[1]
+                  ? $tuple()[0]
+                    ? 'no-url'
+                    : 'no-app'
+                  : false
+              }
+            >
+              {$type => {
+                onMount(() => {
+                  props.onReady();
+                });
+
+                return (
+                  <Show when={$type() === 'no-app'} fallback={<AppNoURL/>}>
+                    <AppNotFound/>
+                  </Show>
+                );
+              }}
             </Match>
           </Switch>
         )}
