@@ -48,7 +48,7 @@ function useLauncherOptions() {
                   string(),
                   transform(v => new URL(v, window.location.origin).toString()),
                 ),
-                'https://platformer.tg/api/gql',
+                'https://mini-apps.store/gql',
               ),
               fallback_url: optional(string()),
               init_timeout: optional(positiveIntFromStr(), '5000'),
