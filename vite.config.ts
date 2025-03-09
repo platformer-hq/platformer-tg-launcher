@@ -7,6 +7,13 @@ import { imagePlugin } from './plugins/imagePlugin';
 
 export default defineConfig({
   base: 'https://platformer-hq.github.io/platformer-tg-launcher/',
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern',
+      },
+    },
+  },
   plugins: [
     // Uncomment the following line to enable solid-devtools.
     // For more info see https://github.com/thetarnav/solid-devtools/tree/main/packages/extension#readme
