@@ -23,7 +23,7 @@ export function getAuthTokenFromStorage(): { token: string, expiresAt: Date } | 
  * @param token - token to save.
  * @param expiresAt - token expiration date.
  */
-export function saveAuthToken(token: string, expiresAt: Date): void {
+export function saveAuthTokenToStorage(token: string, expiresAt: Date): void {
   return setStorageItem(STORAGE_KEY, JSON.stringify({
     token,
     expiresAt: expiresAt.toISOString(),

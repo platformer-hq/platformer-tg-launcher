@@ -17,7 +17,7 @@ import {
 } from '@/components/LauncherLoadError/LauncherLoadError.js';
 import { AppNoURL } from '@/components/AppNoURL/AppNoURL.js';
 import { createTimeoutSignal } from '@/async/createTimeoutSignal.js';
-import { getAuthTokenFromStorage } from '@/storage/auth-token.js';
+import { getAuthTokenFromStorage, saveAuthTokenToStorage } from '@/storage/auth-token.js';
 import { authenticate } from '@/api/authenticate.js';
 import { getAppUrl } from '@/api/getAppUrl.js';
 import { createExecutionResource } from '@/helpers/createExecutionResource.js';
@@ -65,7 +65,14 @@ function BasicBootstrap(props: {
   // Retrieve Platformer authorization token.
   const [$authToken] = createExecutionResource(requestsOptions, async options => {
     const token = getAuthTokenFromStorage();
-    return token ? [true, token] : authenticate(options);
+    return token
+      ? [true, token]
+      : authenticate(options).then(tuple => {
+        if (tuple[0]) {
+          saveAuthTokenToStorage(tuple[1].token, tuple[1].expiresAt);
+        }
+        return tuple;
+      });
   }, { onError: setError });
 
   // Retrieve application data.
