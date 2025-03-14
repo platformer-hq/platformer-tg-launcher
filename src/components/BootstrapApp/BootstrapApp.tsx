@@ -1,5 +1,6 @@
 import {
   createEffect,
+  createMemo,
   createSignal,
   Match,
   mergeProps,
@@ -17,7 +18,6 @@ import {
 } from '@/components/LauncherLoadError/LauncherLoadError.js';
 import { AppNoURL } from '@/components/AppNoURL/AppNoURL.js';
 import { createTimeoutSignal } from '@/async/createTimeoutSignal.js';
-import { getAuthTokenFromStorage, saveAuthTokenToStorage } from '@/storage/auth-token.js';
 import { authenticate } from '@/api/authenticate.js';
 import { getAppUrl } from '@/api/getAppUrl.js';
 import { createExecutionResource } from '@/helpers/createExecutionResource.js';
@@ -59,33 +59,35 @@ function BasicBootstrap(props: {
   apiBaseURL: string;
   appID: number;
   fallbackURL?: Maybe<string>;
-  initDataSanitized: string;
   initTimeout: number;
-  launchParams: string;
-  launchParamsSanitized: string;
   loadTimeout: number;
   onError: (error: AppLoadErrorError, fallbackURL?: string) => void;
   onReady: (fallbackURL?: string) => void;
+  rawLaunchParams: string;
+  securedInitData: string;
+  securedLaunchParams: string;
 }) {
   const $abortSignal = createTimeoutSignal(() => props.initTimeout);
   const [$error, setError] = createSignal<AppLoadErrorError>();
   const requestsOptions = () => mergeProps(props, {
     abortSignal: $abortSignal(),
-    launchParams: props.launchParamsSanitized,
-    initData: props.initDataSanitized,
+    launchParams: props.securedLaunchParams,
+    initData: props.securedInitData,
   });
 
   // Retrieve Platformer authorization token.
   const [$authToken] = createExecutionResource(requestsOptions, async options => {
-    const token = getAuthTokenFromStorage();
-    return token
-      ? [true, token]
-      : authenticate(options).then(tuple => {
-        if (tuple[0]) {
-          saveAuthTokenToStorage(tuple[1].token, tuple[1].expiresAt);
-        }
-        return tuple;
-      });
+    return authenticate(options);
+    // TODO: Uncomment this code when we have a proper failed authentication handling.
+    // const token = getAuthTokenFromStorage();
+    // return token
+    //   ? [true, token]
+    //   : authenticate(options).then(tuple => {
+    //     if (tuple[0]) {
+    //     saveAuthTokenToStorage(tuple[1].token, tuple[1].expiresAt);
+    //     }
+    //     return tuple;
+    //   });
   }, { onError: setError });
 
   // Retrieve application data.
@@ -135,7 +137,7 @@ function BasicBootstrap(props: {
           </Show>
         )}
       </Match>
-      <Match when={$app()}>
+      <Match when={$app.state === 'ready' && $app()}>
         {$tuple => (
           <Switch fallback={<AppNoURL/>}>
             <Match when={$tuple()[1]}>
@@ -194,12 +196,21 @@ export function BootstrapApp(props: {
   apiBaseURL: string;
   appID: number;
   fallbackURL?: Maybe<string>;
-  initDataSanitized: string;
   initTimeout: number;
-  launchParams: string;
-  launchParamsSanitized: string;
   loadTimeout: number;
   onReady: () => void;
+  /**
+   * Launch parameters in their initial format.
+   */
+  rawLaunchParams: string;
+  /**
+   * Init data containing no hash part.
+   */
+  securedInitData: string;
+  /**
+   * Launch parameters containing init data in a secured format.
+   */
+  securedLaunchParams: string;
 }) {
   const [$error, setError] = createSignal<AppLoadErrorError>();
 

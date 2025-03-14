@@ -57,7 +57,8 @@ function useLauncherOptions() {
           ),
         ),
         new URLSearchParams(
-          // Telegram API has a bug replacing & with &amp; for some reason. We are replacing it back.
+          // Telegram API has a bug replacing & with &amp; for some reason. We are replacing it
+          // back.
           window.location.search.replace(/&amp;/g, '&'),
         ),
       );
@@ -82,26 +83,20 @@ function Inner() {
   } = retrieveLaunchParams();
 
   // Initialize the SDK.
-  const [resource] = createResource(() => {
+  const [$initResource] = createResource(() => {
     return init((startParam || '').includes('platformer_debug') || import.meta.env.DEV);
   });
 
   // Wait for the bootstrapper to load.
-  const [bootstrapperReady, setBootstrapperReady] = createSignal(false);
+  const [$bootstrapperReady, setBootstrapperReady] = createSignal(false);
 
   // We are sanitizing the hash property for security purposes, so Platformer could not use this
   // init data to impersonate user.
   // Instead, Platformer uses the "signature" property allowing third parties to validate the
   // init data.
-  const sanitizedInitDataQuery = new URLSearchParams(retrieveRawInitData() || '');
-  sanitizedInitDataQuery.set('hash', '');
-  const sanitizedInitData = sanitizedInitDataQuery.toString();
-
-  // We also do the same with the launch parameters which are also sent to Platformer.
-  const rawLaunchParams = retrieveRawLaunchParams();
-  const sanitizedLaunchParamsQuery = new URLSearchParams(retrieveRawLaunchParams());
-  sanitizedLaunchParamsQuery.set('tgWebAppData', sanitizedInitData);
-  const sanitizedLaunchParams = sanitizedLaunchParamsQuery.toString();
+  const securedInitDataQuery = new URLSearchParams(retrieveRawInitData() || '');
+  securedInitDataQuery.set('hash', '');
+  const securedInitData = securedInitDataQuery.toString();
 
   return (
     <main
@@ -119,7 +114,7 @@ function Inner() {
       >
         {$data => (
           <Show
-            when={sanitizedInitData}
+            when={securedInitData}
             fallback={
               <LauncherError
                 title="Init data is missing"
@@ -127,7 +122,14 @@ function Inner() {
               />
             }
           >
-            {$initData => {
+            {$securedInitData => {
+              // Here we do the same thing as we did with the init data - we secure it by replacing
+              // exposed init data with the secured one.
+              const rawLaunchParams = retrieveRawLaunchParams();
+              const securedLaunchParamsQuery = new URLSearchParams(rawLaunchParams);
+              securedLaunchParamsQuery.set('tgWebAppData', securedInitData);
+              const securedLaunchParams = securedLaunchParamsQuery.toString();
+
               // Compute fallback URL in case something went wrong with Platformer.
               const $fallbackURL = createMemo(() => {
                 const { fallbackURL } = $data();
@@ -142,13 +144,13 @@ function Inner() {
                 if (url.hash) {
                   // We should use launch params and merge them with parameters, defined in
                   // the URL hash.
-                  const qp = new URLSearchParams(sanitizedLaunchParams);
+                  const qp = new URLSearchParams(rawLaunchParams);
                   new URLSearchParams(url.hash.slice(1)).forEach((v, k) => {
                     qp.set(k, v);
                   });
                   hash = qp.toString();
                 } else {
-                  hash = sanitizedLaunchParams;
+                  hash = rawLaunchParams;
                 }
                 url.hash = `#${hash}`;
 
@@ -157,18 +159,18 @@ function Inner() {
 
               return (
                 <>
-                  <Show when={!bootstrapperReady() || resource.loading}>
+                  <Show when={!$bootstrapperReady() || $initResource.loading}>
                     <AppLoading platform={platform}/>
                   </Show>
                   <BootstrapApp
                     {...$data()}
                     fallbackURL={$fallbackURL()}
-                    initDataSanitized={$initData()}
-                    launchParams={rawLaunchParams}
-                    launchParamsSanitized={sanitizedLaunchParams}
                     onReady={() => {
                       setBootstrapperReady(true);
                     }}
+                    rawLaunchParams={rawLaunchParams}
+                    securedInitData={$securedInitData()}
+                    securedLaunchParams={securedLaunchParams}
                   />
                 </>
               );
