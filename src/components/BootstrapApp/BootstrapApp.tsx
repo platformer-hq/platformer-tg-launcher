@@ -30,15 +30,28 @@ function BootstrappedContainer(props: {
 }) {
   const [picked] = splitProps(props, ['url', 'loadTimeout', 'onReady']);
   return (
-    <AppContainer
-      {...picked}
-      onError={() => {
-        props.onError(['iframe']);
-      }}
-      onTimeout={() => {
-        props.onError(['iframe', true]);
-      }}
-    />
+    <Show
+      when={props.url.startsWith('http://')}
+      fallback={
+        <AppContainer
+          {...picked}
+          onError={() => {
+            props.onError(['iframe']);
+          }}
+          onTimeout={() => {
+            props.onError(['iframe', true]);
+          }}
+        />
+      }
+    >
+      {(() => {
+        // Web doesn't support loading iframes with an HTTP URL in the secure context. All we
+        // can do is just to redirect to the URL.
+        window.location.href = props.url;
+        props.onReady();
+        return null;
+      })()}
+    </Show>
   );
 }
 
