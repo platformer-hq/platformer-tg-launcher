@@ -126,13 +126,25 @@ function BasicBootstrap(props: {
         {$tuple => (
           <Switch fallback={<AppNoURL/>}>
             <Match when={$tuple()[1]}>
-              {$url => (
-                <BootstrappedContainer
-                  {...props}
-                  url={$url()}
-                  onError={setError}
-                />
-              )}
+              {$url => {
+                const $urlComplete = createMemo(() => {
+                  const url = new URL($url());
+                  const hashParams = new URLSearchParams(url.hash.slice(1));
+                  new URLSearchParams(props.rawLaunchParams).forEach((value, key) => {
+                    hashParams.set(key, value);
+                  });
+                  url.hash = '#' + hashParams.toString();
+                  return url.toString();
+                });
+
+                return (
+                  <BootstrappedContainer
+                    {...props}
+                    url={$urlComplete()}
+                    onError={setError}
+                  />
+                );
+              }}
             </Match>
             <Match
               when={
