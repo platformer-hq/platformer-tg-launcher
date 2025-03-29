@@ -9,14 +9,14 @@ import {
   type Platform,
   mockTelegramEnv,
   emitEvent,
-  targetOrigin,
   themeParamsState,
+  retrieveLaunchParams,
+  type ThemeParams,
 } from '@telegram-apps/sdk-solid';
 
 import { camelToKebab } from '@/helpers/camelToKebab.js';
 
 export async function init(debug: boolean, platform: Platform) {
-  targetOrigin.set('*');
   setDebug(debug);
   initSDK();
 
@@ -60,26 +60,33 @@ export async function init(debug: boolean, platform: Platform) {
   // Telegram for macOS has a ton of bugs, including cases, when the client doesn't
   // even response to the "web_app_request_theme" method. It also generates an incorrect
   // event for the "web_app_request_safe_area" method.
-  platform === 'macos' && mockTelegramEnv({
-    onEvent(event, next) {
-      if (event[0] === 'web_app_request_theme') {
-        return emitEvent(
-          'theme_changed',
-          { theme_params: themeParamsState() },
-        );
-      }
+  if (platform === 'macos') {
+    let firstThemeSent = false;
+    mockTelegramEnv({
+      onEvent(event, next) {
+        if (event[0] === 'web_app_request_theme') {
+          let tp: ThemeParams = {};
+          if (firstThemeSent) {
+            tp = themeParamsState();
+          } else {
+            firstThemeSent = true;
+            tp ||= retrieveLaunchParams().tgWebAppThemeParams;
+          }
+          return emitEvent('theme_changed', { theme_params: tp });
+        }
 
-      if (event[0] === 'web_app_request_safe_area') {
-        return emitEvent('safe_area_changed', {
-          left: 0,
-          top: 0,
-          right: 0,
-          bottom: 0,
-        });
-      }
-      next();
-    },
-  });
+        if (event[0] === 'web_app_request_safe_area') {
+          return emitEvent('safe_area_changed', {
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+          });
+        }
+        next();
+      },
+    });
+  }
 
   await Promise.all([
     mountThemeParams().then(() => {
