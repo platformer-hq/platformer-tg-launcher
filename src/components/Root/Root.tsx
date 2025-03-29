@@ -84,7 +84,7 @@ function Inner() {
 
   // Initialize the SDK.
   const [$initResource] = createResource(() => {
-    return init((startParam || '').includes('platformer_debug') || import.meta.env.DEV);
+    return init((startParam || '').includes('platformer_debug') || import.meta.env.DEV, platform);
   });
 
   // Wait for the bootstrapper to load.
